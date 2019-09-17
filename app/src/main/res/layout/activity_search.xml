@@ -6,57 +6,46 @@
     android:layout_height="match_parent"
     tools:context=".search">
 
-    <Spinner
-        android:id="@+id/itemSelector"
-        android:layout_width="279dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="243dp"
-        android:layout_marginEnd="56dp"
-        android:layout_marginBottom="458dp"
-        style="@android:style/Widget.Holo.Light.Spinner"
-        android:entries="@array/items"
-        android:spinnerMode="dialog"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.19"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Spinner
-        android:id="@+id/itemDetailsSelector"
-        android:layout_width="279dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="56dp"
-        android:layout_marginBottom="23dp"
-        android:spinnerMode="dialog"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/locationSelector"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.19"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSelector"
-        app:layout_constraintVertical_bias="0.0" />
-
     <TextView
         android:id="@+id/itemSelectorHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="135dp"
-        android:layout_marginTop="178dp"
         android:layout_marginEnd="136dp"
-        android:layout_marginBottom="33dp"
         android:text="Search Inventory"
         android:textAlignment="center"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/itemSelector"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.108" />
+
+    <Spinner
+        android:id="@+id/itemDetailsSelector"
+        android:layout_width="279dp"
+        android:layout_height="40dp"
+        android:spinnerMode="dialog"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.337" />
+
+    <Spinner
+        android:id="@+id/itemSelector"
+        style="@android:style/Widget.Holo.Light.Spinner"
+        android:layout_width="279dp"
+        android:layout_height="40dp"
+        android:entries="@array/items"
+        android:spinnerMode="dialog"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.217" />
 
     <Button
         android:id="@+id/locationSelector"
@@ -72,27 +61,40 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/background_color"
         android:onClick="selectLocations"
-        android:text="Select Location (s)"
+        android:text="Select Location(s)"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.43"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.499" />
+        app:layout_constraintVertical_bias="0.452" />
 
     <TextView
         android:id="@+id/selectedLocations"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="205dp"
-        android:layout_marginTop="468dp"
-        android:layout_marginEnd="206dp"
-        android:layout_marginBottom="244dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.573" />
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="161dp"
+        android:layout_marginEnd="162dp"
+        android:layout_marginBottom="89dp"
+        android:drawableRight="@android:drawable/ic_menu_search"
+        android:onClick="startSearch"
+        android:text="Search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>

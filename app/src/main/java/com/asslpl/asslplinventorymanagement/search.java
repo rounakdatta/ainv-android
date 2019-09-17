@@ -26,12 +26,22 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class search extends AppCompatActivity {
 
     JSONArray allItemsArray = null;
+    JSONArray allCountriesArray = null;
+    ArrayList<MultiSelectModel> listOfCountries = new ArrayList<>();
+
+    final Dictionary itemDescription2IdMapper = new Hashtable();
+
+    ArrayList<String> queryLocations = new ArrayList<>();
+    String queryItemName = null;
+    String queryItemVariant = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +51,8 @@ public class search extends AppCompatActivity {
         TinyDB tdb = new TinyDB(getApplicationContext());
         Spinner itemSelector = findViewById(R.id.itemSelector);
 
-        String testEndpoint = "https://ainv.glitch.me";
-        String getcountryDataURL = testEndpoint + "/data";
+        String testEndpoint = "http://157.245.99.108";
+        String getcountryDataURL = testEndpoint + "/api/get/items";
 
         ArrayList<String> itemNames = null;
 
@@ -54,6 +64,12 @@ public class search extends AppCompatActivity {
             itemNames = new ArrayList<>();
             for (int i = 0; i < allItemsArray.length(); i++) {
                 itemNames.add(allItemsArray.getJSONObject(i).getString("name"));
+            }
+
+            try {
+                queryItemName = allItemsArray.getJSONObject(0).getString("name");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             ArrayAdapter<String> itemDisplayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, itemNames);
@@ -74,6 +90,12 @@ public class search extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Spinner itemDetailsSelector = findViewById(R.id.itemDetailsSelector);
 
+                try {
+                    queryItemName = allItemsArray.getJSONObject(i).getString("name");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 Log.e("Item Click","Position: " + i);
                 ArrayList<String> itemVariants = new ArrayList<>();
                 JSONArray allVariants = null;
@@ -88,9 +110,22 @@ public class search extends AppCompatActivity {
 //                    Log.e("sel: ", allVariants.getString(j));
                     try {
                         itemVariants.add(allVariants.getString(j));
+                        String key = allItemsArray.getJSONObject(i).getString("name") + allVariants.getString(j);
+                        String val = allItemsArray.getJSONObject(i).getJSONArray("itemId").getString(j);
+
+                        Log.e("inserting-key", key);
+                        Log.e("inserting-val", val);
+
+                        itemDescription2IdMapper.put(key, val);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }
+
+                try {
+                    queryItemVariant = allVariants.getString(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
                 ArrayAdapter<String> descriptionAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, itemVariants);
@@ -103,6 +138,41 @@ public class search extends AppCompatActivity {
                 return;
             }
         });
+
+
+        String getWarehouseDataURL = testEndpoint + "/api/get/warehouses";
+
+        ArrayList<String> countryNames = null;
+        Dictionary warehouseLocation2IdMapper = new Hashtable();
+
+        HttpGetRequest warehouseGetter = new HttpGetRequest();
+        try {
+            String allItems = warehouseGetter.execute(getWarehouseDataURL).get();
+            allCountriesArray = new JSONArray(allItems);
+
+            countryNames = new ArrayList<>();
+            for (int i = 0; i < allCountriesArray.length(); i++) {
+                String wLocation = allCountriesArray.getJSONObject(i).getString("warehouseLocation");
+
+                countryNames.add(wLocation);
+                listOfCountries.add(new MultiSelectModel(i, wLocation));
+
+                JSONArray wIds = allCountriesArray.getJSONObject(i).getJSONArray("warehouseId");
+                for (int j = 0; j < wIds.length(); j++) {
+                    warehouseLocation2IdMapper.put(wLocation, wIds.getString(j));
+                }
+            }
+
+        } catch(Exception e) {
+            System.out.println(e);
+
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+            toast.show();
+
+            return;
+        }
+
     }
 
     public void selectLocations(View view) {
@@ -112,10 +182,6 @@ public class search extends AppCompatActivity {
         final List<String> list = Arrays.asList(getResources().getStringArray(R.array.items));
         final Boolean[] foobar = {true, true, false};
 
-        ArrayList<MultiSelectModel> listOfCountries = new ArrayList<>();
-        listOfCountries.add(new MultiSelectModel(1, "India"));
-        listOfCountries.add(new MultiSelectModel(2, "US"));
-        listOfCountries.add(new MultiSelectModel(3, "UK"));
 
         ArrayList<Integer> alreadySelectedCountries = new ArrayList<>();
 
@@ -133,15 +199,24 @@ public class search extends AppCompatActivity {
                     @Override
                     public void onSelected(ArrayList<Integer> selectedIds, ArrayList<String> selectedNames, String dataString) {
                         Log.e("selectedIds", selectedIds.toString());
-                        //will return list of selected IDS
-                        for (int i = 0; i < selectedIds.size(); i++) {
-                            Toast.makeText(search.this, "Selected Ids : " + selectedIds.get(i) + "\n" +
-                                    "Selected Names : " + selectedNames.get(i) + "\n" +
-                                    "DataString : " + dataString, Toast.LENGTH_LONG).show();
-                        }
+                        // will return list of selected IDS
+//                        for (int i = 0; i < selectedIds.size(); i++) {
+//                            Toast.makeText(search.this, "Selected Ids : " + selectedIds.get(i) + "\n" +
+//                                    "Selected Names : " + selectedNames.get(i) + "\n" +
+//                                    "DataString : " + dataString, Toast.LENGTH_LONG).show();
+//                        }
 
                         TextView selectedTexts = findViewById(R.id.selectedLocations);
-                        selectedTexts.setText("Selected Locations are " + selectedNames.toString());
+                        selectedTexts.setText("");
+
+                        StringBuffer selectedNamesDisplay = new StringBuffer();
+                        for (int i = 0; i < selectedNames.size(); i++) {
+                            queryLocations.add(selectedNames.get(i));
+                            selectedTexts.append(selectedNames.get(i));
+                            selectedTexts.append("\n");
+                        }
+
+                        // selectedTexts.setText("Selected Locations are " + selectedNames.toString());
 
 
                     }
@@ -155,5 +230,24 @@ public class search extends AppCompatActivity {
                 });
 
         multiSelectDialog.show(getSupportFragmentManager(), "multiSelectDialog");
+    }
+
+    public void startSearch(View view) {
+
+        Spinner itemDetailsSelector = findViewById(R.id.itemDetailsSelector);
+        queryItemVariant = itemDetailsSelector.getSelectedItem().toString();
+
+        String queryId = (String) itemDescription2IdMapper.get(queryItemName + queryItemVariant);
+
+        Context context = getApplicationContext();
+        Toast toast = Toast.makeText(context, queryId, Toast.LENGTH_SHORT);
+        toast.show();
+
+
+        Intent viewInventoryPage = new Intent(getApplicationContext(), view_inventory.class);
+        viewInventoryPage.putExtra("locations", queryLocations);
+        viewInventoryPage.putExtra("id", queryId);
+        startActivity(viewInventoryPage);
+        finish();
     }
 }
