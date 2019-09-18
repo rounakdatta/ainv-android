@@ -1,4 +1,32 @@
-<com.evrencoskun.tableview.TableView android:id="@+id/content_container"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:layout_height="match_parent"
+    tools:context=".view_inventory">
+
+
+    <android.widget.HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="474dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.codecrafters.tableview.TableView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:table="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tableView"
+            android:layout_width="2000dp"
+            android:layout_height="2000dp"
+            android:layout_marginTop="8dp"
+            table:layout_constraintTop_toTopOf="parent"
+            table:tableView_columnCount="11" />
+
+    </android.widget.HorizontalScrollView>
+
+
+
+</android.support.constraint.ConstraintLayout>
+

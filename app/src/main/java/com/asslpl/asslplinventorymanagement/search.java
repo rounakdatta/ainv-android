@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
@@ -38,6 +39,7 @@ public class search extends AppCompatActivity {
     ArrayList<MultiSelectModel> listOfCountries = new ArrayList<>();
 
     final Dictionary itemDescription2IdMapper = new Hashtable();
+    Dictionary warehouseLocation2IdMapper = new Hashtable();
 
     ArrayList<String> queryLocations = new ArrayList<>();
     String queryItemName = null;
@@ -143,7 +145,6 @@ public class search extends AppCompatActivity {
         String getWarehouseDataURL = testEndpoint + "/api/get/warehouses";
 
         ArrayList<String> countryNames = null;
-        Dictionary warehouseLocation2IdMapper = new Hashtable();
 
         HttpGetRequest warehouseGetter = new HttpGetRequest();
         try {
@@ -158,9 +159,16 @@ public class search extends AppCompatActivity {
                 listOfCountries.add(new MultiSelectModel(i, wLocation));
 
                 JSONArray wIds = allCountriesArray.getJSONObject(i).getJSONArray("warehouseId");
-                for (int j = 0; j < wIds.length(); j++) {
-                    warehouseLocation2IdMapper.put(wLocation, wIds.getString(j));
+//                for (int j = 0; j < wIds.length(); j++) {
+//                    warehouseLocation2IdMapper.put(wLocation, wIds.getString(j));
+//                }
+
+                // String outputLocation = TextUtils.join(" ", (Iterable) wIds);
+                String outputLocation = "";
+                for (int k = 0; k <wIds.length(); k++) {
+                    outputLocation += (wIds.getString(k) + " ");
                 }
+                warehouseLocation2IdMapper.put(wLocation, outputLocation);
             }
 
         } catch(Exception e) {
@@ -245,7 +253,13 @@ public class search extends AppCompatActivity {
 
 
         Intent viewInventoryPage = new Intent(getApplicationContext(), view_inventory.class);
-        viewInventoryPage.putExtra("locations", queryLocations);
+
+        String queryLocationsString = "";
+        for (int i = 0; i < queryLocations.size(); i++) {
+            queryLocationsString += warehouseLocation2IdMapper.get(queryLocations.get(i));
+        }
+
+        viewInventoryPage.putExtra("locations", queryLocationsString);
         viewInventoryPage.putExtra("id", queryId);
         startActivity(viewInventoryPage);
         finish();
