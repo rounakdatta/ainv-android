@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,13 +40,18 @@ public class search extends AppCompatActivity {
     JSONArray allItemsArray = null;
     JSONArray allCountriesArray = null;
     ArrayList<MultiSelectModel> listOfCountries = new ArrayList<>();
+    ArrayList<MultiSelectModel> itemVariantsObject = new ArrayList<>();
 
     final Dictionary itemDescription2IdMapper = new Hashtable();
     Dictionary warehouseLocation2IdMapper = new Hashtable();
 
     ArrayList<String> queryLocations = new ArrayList<>();
+    ArrayList<String> queryIds= new ArrayList<>();
     String queryItemName = null;
     String queryItemVariant = null;
+    ArrayList<String> itemVariants = new ArrayList<>();
+    ArrayList<String> itemVariantIds = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,7 @@ public class search extends AppCompatActivity {
 
         TinyDB tdb = new TinyDB(getApplicationContext());
         Spinner itemSelector = findViewById(R.id.itemSelector);
+
 
         String testEndpoint = "http://157.245.99.108";
         String getcountryDataURL = testEndpoint + "/api/get/items";
@@ -90,7 +99,7 @@ public class search extends AppCompatActivity {
 
         itemSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Spinner itemDetailsSelector = findViewById(R.id.itemDetailsSelector);
+//                Spinner itemDetailsSelector = findViewById(R.id.itemDetailsSelector);
 
                 try {
                     queryItemName = allItemsArray.getJSONObject(i).getString("name");
@@ -99,8 +108,9 @@ public class search extends AppCompatActivity {
                 }
 
                 Log.e("Item Click","Position: " + i);
-                ArrayList<String> itemVariants = new ArrayList<>();
+
                 JSONArray allVariants = null;
+                itemVariantsObject.clear();
 
                 try {
                     allVariants = allItemsArray.getJSONObject(i).getJSONArray("description");
@@ -114,6 +124,9 @@ public class search extends AppCompatActivity {
                         itemVariants.add(allVariants.getString(j));
                         String key = allItemsArray.getJSONObject(i).getString("name") + allVariants.getString(j);
                         String val = allItemsArray.getJSONObject(i).getJSONArray("itemId").getString(j);
+
+                        itemVariantsObject.add(new MultiSelectModel(Integer.parseInt(val), allVariants.getString(j)));
+                        itemVariantIds.add(val);
 
                         Log.e("inserting-key", key);
                         Log.e("inserting-val", val);
@@ -133,7 +146,7 @@ public class search extends AppCompatActivity {
                 ArrayAdapter<String> descriptionAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, itemVariants);
                 descriptionAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                 //adapter.setDropDownViewResource(R.layout.custom_spinner);
-                itemDetailsSelector.setAdapter(descriptionAdapter);
+//                itemDetailsSelector.setAdapter(descriptionAdapter);
             }
 
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -181,6 +194,63 @@ public class search extends AppCompatActivity {
             return;
         }
 
+
+
+        // handling on all variants checkbox selected
+        CheckBox selectAllVariants = (CheckBox) findViewById(R.id.selectAllVariants);
+        selectAllVariants.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Button variantSelector = findViewById(R.id.variantSelector);
+                if (b) {
+                    variantSelector.setEnabled(false);
+
+                    queryIds.clear();
+
+                    for (int i = 0; i < itemVariantIds.size(); i++) {
+                        queryIds.add(String.valueOf(itemVariantIds.get(i)));
+                    }
+                } else {
+                    variantSelector.setEnabled(true);
+                }
+            }
+        });
+
+
+        // handling on all locations checkbox selected
+        CheckBox selectAllLocations = (CheckBox) findViewById(R.id.selectAllLocations);
+        selectAllLocations.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Button locationSelector = findViewById(R.id.locationSelector);
+                if (b) {
+                    locationSelector.setEnabled(false);
+
+                    TextView selectedTexts = findViewById(R.id.selectedLocations);
+                    selectedTexts.setText("");
+
+                    queryLocations.clear();
+
+                    StringBuffer selectedNamesDisplay = new StringBuffer();
+                    for (int i = 0; i < allCountriesArray.length(); i++) {
+                        try {
+                            String wId = allCountriesArray.getJSONObject(i).getString("warehouseLocation");
+                            queryLocations.add(wId);
+                            selectedTexts.append(wId);
+                            selectedTexts.append("\n");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    locationSelector.setEnabled(true);
+
+                    TextView selectedTexts = findViewById(R.id.selectedLocations);
+                    selectedTexts.setText("");
+                }
+            }
+        });
+
     }
 
     public void selectLocations(View view) {
@@ -217,6 +287,8 @@ public class search extends AppCompatActivity {
                         TextView selectedTexts = findViewById(R.id.selectedLocations);
                         selectedTexts.setText("");
 
+                        queryLocations.clear();
+
                         StringBuffer selectedNamesDisplay = new StringBuffer();
                         for (int i = 0; i < selectedNames.size(); i++) {
                             queryLocations.add(selectedNames.get(i));
@@ -242,14 +314,14 @@ public class search extends AppCompatActivity {
 
     public void startSearch(View view) {
 
-        Spinner itemDetailsSelector = findViewById(R.id.itemDetailsSelector);
-        queryItemVariant = itemDetailsSelector.getSelectedItem().toString();
-
-        String queryId = (String) itemDescription2IdMapper.get(queryItemName + queryItemVariant);
-
-        Context context = getApplicationContext();
-        Toast toast = Toast.makeText(context, queryId, Toast.LENGTH_SHORT);
-        toast.show();
+//        Spinner itemDetailsSelector = findViewById(R.id.itemDetailsSelector);
+//        queryItemVariant = itemDetailsSelector.getSelectedItem().toString();
+//
+//        String queryId = (String) itemDescription2IdMapper.get(queryItemName + queryItemVariant);
+//
+//        Context context = getApplicationContext();
+//        Toast toast = Toast.makeText(context, queryId, Toast.LENGTH_SHORT);
+//        toast.show();
 
 
         Intent viewInventoryPage = new Intent(getApplicationContext(), view_inventory.class);
@@ -259,9 +331,74 @@ public class search extends AppCompatActivity {
             queryLocationsString += warehouseLocation2IdMapper.get(queryLocations.get(i));
         }
 
+        String queryIdsString = "";
+        for (int i = 0; i < queryIds.size(); i++) {
+            queryIdsString += (queryIds.get(i) + " ");
+        }
+
         viewInventoryPage.putExtra("locations", queryLocationsString);
-        viewInventoryPage.putExtra("id", queryId);
+        viewInventoryPage.putExtra("id", queryIdsString);
         startActivity(viewInventoryPage);
         finish();
+    }
+
+    public void selectVariant(View view) {
+
+        /*
+         * Getting array of String to Bind in Spinner
+         */
+        final List<String> list = Arrays.asList(getResources().getStringArray(R.array.items));
+        final Boolean[] foobar = {true, true, false};
+
+
+        ArrayList<Integer> alreadySelectedCountries = new ArrayList<>();
+
+
+        MultiSelectDialog multiSelectDialog = new MultiSelectDialog()
+                .title("Select Variant(s)") //setting title for dialog
+                .titleSize(25)
+                .positiveText("Done")
+                .negativeText("Cancel")
+                .setMinSelectionLimit(1) //you can set minimum checkbox selection limit (Optional)
+                .setMaxSelectionLimit(itemVariantsObject.size()) //you can set maximum checkbox selection limit (Optional)
+                .preSelectIDsList(alreadySelectedCountries) //List of ids that you need to be selected
+                .multiSelectList(itemVariantsObject) // the multi select model list with ids and name
+                .onSubmit(new MultiSelectDialog.SubmitCallbackListener() {
+                    @Override
+                    public void onSelected(ArrayList<Integer> selectedIds, ArrayList<String> selectedNames, String dataString) {
+                        Log.e("selectedIds", selectedIds.toString());
+                        // will return list of selected IDS
+//                        for (int i = 0; i < selectedIds.size(); i++) {
+//                            Toast.makeText(search.this, "Selected Ids : " + selectedIds.get(i) + "\n" +
+//                                    "Selected Names : " + selectedNames.get(i) + "\n" +
+//                                    "DataString : " + dataString, Toast.LENGTH_LONG).show();
+//                        }
+
+//                        TextView selectedTexts = findViewById(R.id.selectedLocations);
+//                        selectedTexts.setText("");
+//
+//                        StringBuffer selectedNamesDisplay = new StringBuffer();
+
+                        queryIds.clear();
+
+                        for (int i = 0; i < selectedIds.size(); i++) {
+                            queryIds.add(String.valueOf(selectedIds.get(i)));
+                        }
+
+                        // selectedTexts.setText("Selected Locations are " + selectedNames.toString());
+
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        System.out.println("cancelled");
+                    }
+
+
+                });
+
+        multiSelectDialog.show(getSupportFragmentManager(), "multiSelectDialog");
+
     }
 }

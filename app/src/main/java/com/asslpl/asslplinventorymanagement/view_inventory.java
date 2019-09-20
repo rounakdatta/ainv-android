@@ -60,8 +60,8 @@ public class view_inventory extends AppCompatActivity {
                 dataToShow.add(foo);
             }
 
-            Toast toast = Toast.makeText(context, searchResponse, Toast.LENGTH_LONG);
-            toast.show();
+//            Toast toast = Toast.makeText(context, searchResponse, Toast.LENGTH_LONG);
+//            toast.show();
 
         } catch (ExecutionException e) {
             searchResponse = "EXC";
@@ -73,12 +73,12 @@ public class view_inventory extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Inventory foo = new Inventory("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
-        Inventory bar = new Inventory("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
-        dataToShow.add(foo);
-        dataToShow.add(bar);
+//        Inventory foo = new Inventory("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
+//        Inventory bar = new Inventory("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
+//        dataToShow.add(foo);
+//        dataToShow.add(bar);
 
-        headerData.add(foo);
+//        headerData.add(foo);
 
         TableView tableView = (TableView) findViewById(R.id.tableView);
 //        tableView.setColumnCount(4);
