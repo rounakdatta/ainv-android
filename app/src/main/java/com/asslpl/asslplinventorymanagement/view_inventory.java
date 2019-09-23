@@ -23,7 +23,7 @@ public class view_inventory extends AppCompatActivity {
     private List<Inventory> dataToShow = new ArrayList<>();
     private List<Inventory> headerData = new ArrayList<>();
 
-    private static final String[] TABLE_HEADERS = { "Item Description", "Item Variant Description", "HSN Code", "Item Variant Quantity", "UoM", "Small Box Quantity", "UoM", "Big Carton Quantity", "UoM", "Warehouse Name", "Warehouse Location" };
+    private static final String[] TABLE_HEADERS = { "Item Description", "Item Variant Description", "HSN Code", "Big Carton Quantity", "UoM", "Small Box Quantity", "UoM", "Item Variant Quantity", "UoM", "Warehouse Name", "Warehouse Location" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class view_inventory extends AppCompatActivity {
             inventoryCollection = new ArrayList<>();
             for (int i = 0; i < searchResponseArray.length(); i++) {
                 JSONObject newInv = searchResponseArray.getJSONObject(i);
-                Inventory foo = new Inventory(newInv.getString("itemName"), newInv.getString("itemVariant"), newInv.getString("hsnCode"), newInv.getString("itemQuantity"), newInv.getString("uomRaw"), newInv.getString("smallboxQuantity"), newInv.getString("uomSmall"), newInv.getString("bigcartonQuantity"), newInv.getString("uomBig"), newInv.getString("warehouseName"), newInv.getString("warehouseLocation"));
+                Inventory foo = new Inventory(newInv.getString("itemName"), newInv.getString("itemVariant"), newInv.getString("hsnCode"), newInv.getString("bigcartonQuantity"), newInv.getString("uomBig"), newInv.getString("smallboxQuantity"), newInv.getString("uomSmall"), newInv.getString("itemQuantity"), newInv.getString("uomRaw"), newInv.getString("warehouseName"), newInv.getString("warehouseLocation"));
                 dataToShow.add(foo);
             }
 
@@ -77,6 +77,15 @@ public class view_inventory extends AppCompatActivity {
 //        Inventory bar = new Inventory("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11");
 //        dataToShow.add(foo);
 //        dataToShow.add(bar);
+//        dataToShow.add(bar);
+//        dataToShow.add(bar);
+//        dataToShow.add(bar);
+//        dataToShow.add(bar);
+//        dataToShow.add(bar);
+//        dataToShow.add(bar);
+//        dataToShow.add(bar);
+//        dataToShow.add(bar);
+
 
 //        headerData.add(foo);
 

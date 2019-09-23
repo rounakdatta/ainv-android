@@ -61,6 +61,9 @@ public class search extends AppCompatActivity {
         TinyDB tdb = new TinyDB(getApplicationContext());
         Spinner itemSelector = findViewById(R.id.itemSelector);
 
+        final CheckBox selectAllVariants = (CheckBox) findViewById(R.id.selectAllVariants);
+        CheckBox selectAllLocations = (CheckBox) findViewById(R.id.selectAllLocations);
+
 
         String testEndpoint = "http://157.245.99.108";
         String getcountryDataURL = testEndpoint + "/api/get/items";
@@ -111,6 +114,7 @@ public class search extends AppCompatActivity {
 
                 JSONArray allVariants = null;
                 itemVariantsObject.clear();
+                itemVariantIds.clear();
 
                 try {
                     allVariants = allItemsArray.getJSONObject(i).getJSONArray("description");
@@ -145,6 +149,18 @@ public class search extends AppCompatActivity {
 
                 ArrayAdapter<String> descriptionAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, itemVariants);
                 descriptionAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+                if (selectAllVariants.isChecked()) {
+                    Log.e("doingDuty", "Now I must update the values");
+                    Log.e("itemsOnMyBucket", itemVariantIds.toString());
+                    queryIds.clear();
+
+                    for (int j = 0; j < itemVariantIds.size(); j++) {
+                        queryIds.add(String.valueOf(itemVariantIds.get(j)));
+                    }
+                }
+
+
                 //adapter.setDropDownViewResource(R.layout.custom_spinner);
 //                itemDetailsSelector.setAdapter(descriptionAdapter);
             }
@@ -197,7 +213,6 @@ public class search extends AppCompatActivity {
 
 
         // handling on all variants checkbox selected
-        CheckBox selectAllVariants = (CheckBox) findViewById(R.id.selectAllVariants);
         selectAllVariants.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -218,7 +233,6 @@ public class search extends AppCompatActivity {
 
 
         // handling on all locations checkbox selected
-        CheckBox selectAllLocations = (CheckBox) findViewById(R.id.selectAllLocations);
         selectAllLocations.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
