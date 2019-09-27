@@ -13,9 +13,9 @@ public class user_onboarding extends AppCompatActivity {
         setContentView(R.layout.activity_user_onboarding);
     }
 
-    public void gotoSearchPage(View view) {
-        Intent searchPage = new Intent(getApplicationContext(), search.class);
-        startActivity(searchPage);
+    public void gotoActivityChooserPage(View view) {
+        Intent activityChooserPage = new Intent(getApplicationContext(), ActivityChooser.class);
+        startActivity(activityChooserPage);
         finish();
     }
 }

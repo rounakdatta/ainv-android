@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ASSLPL Inventory Management</string>
+    <string name="app_name">ASSLPL SM</string>
     <string name="title_activity_user_onboarding">Sign In</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

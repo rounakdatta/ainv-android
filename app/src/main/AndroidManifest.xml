@@ -9,13 +9,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/asslpl_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view_inventory"></activity>
+        <activity android:name=".WarehouseEntry"></activity>
+        <activity android:name=".ActivityChooser" />
+        <activity android:name=".view_inventory" />
         <activity android:name=".search" />
         <activity android:name=".user_onboarding" />
         <activity android:name=".start_page">
