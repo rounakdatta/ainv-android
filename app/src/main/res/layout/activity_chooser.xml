@@ -22,9 +22,17 @@
         <ImageView
             android:id="@+id/warehouseEntryImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="170dp"
+            android:layout_gravity="bottom"
             android:contentDescription="Warehouse Entry"
             android:src="@drawable/asslpl_warehouse"></ImageView>
+
+        <TextView
+            android:id="@+id/warehouseEntryLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Warehouse Entry" />
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
@@ -47,6 +55,13 @@
             android:layout_height="match_parent"
             android:contentDescription="Item Search"
             android:src="@drawable/asslpl_search"></ImageView>
+
+        <TextView
+            android:id="@+id/itemSearchLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="item Search" />
     </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>
