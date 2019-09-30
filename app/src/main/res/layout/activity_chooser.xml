@@ -52,7 +52,8 @@
         <ImageView
             android:id="@+id/itemSearchImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="170dp"
+            android:layout_gravity="bottom"
             android:contentDescription="Item Search"
             android:src="@drawable/asslpl_search"></ImageView>
 
@@ -61,7 +62,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="item Search" />
+            android:text="Item Search" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/itemMaster"
+        android:onClick="gotoItemEntryPage"
+        android:layout_width="395dp"
+        android:layout_height="189dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="500dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/itemMasterImage"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:layout_gravity="bottom"
+            android:contentDescription="Item Entry"
+            android:src="@drawable/asslpl_item"></ImageView>
+
+        <TextView
+            android:id="@+id/itemMasterLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Item Entry" />
     </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>

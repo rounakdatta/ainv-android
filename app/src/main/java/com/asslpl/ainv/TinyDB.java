@@ -1,4 +1,4 @@
-package com.asslpl.asslplinventorymanagement;
+package com.asslpl.ainv;
 /*
  * Copyright 2014 KC Ochibili
  *

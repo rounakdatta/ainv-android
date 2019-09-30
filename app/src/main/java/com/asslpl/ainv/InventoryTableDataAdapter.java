@@ -1,4 +1,4 @@
-package com.asslpl.asslplinventorymanagement;
+package com.asslpl.ainv;
 
 import android.content.Context;
 import android.view.View;

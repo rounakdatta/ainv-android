@@ -1,4 +1,4 @@
-package com.asslpl.asslplinventorymanagement;
+package com.asslpl.ainv;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +11,6 @@ import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Pattern;
-
-import org.json.JSONArray;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

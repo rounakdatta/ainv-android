@@ -1,4 +1,4 @@
-package com.asslpl.asslplinventorymanagement;
+package com.asslpl.ainv;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +16,15 @@ public class ActivityChooser extends AppCompatActivity {
     public void gotoWarehouseEntryPage(View view) {
         Intent warehouseEntryPage = new Intent(getApplicationContext(), WarehouseEntry.class);
         startActivity(warehouseEntryPage);
-        finish();
     }
 
     public void gotoItemSearchPage(View view) {
         Intent itemSearchPage = new Intent(getApplicationContext(), search.class);
         startActivity(itemSearchPage);
-        finish();
+    }
+
+    public void gotoItemEntryPage(View view) {
+        Intent itemEntryPage = new Intent(getApplicationContext(), ItemMasterEntry.class);
+        startActivity(itemEntryPage);
     }
 }

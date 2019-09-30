@@ -1,4 +1,4 @@
-package com.asslpl.asslplinventorymanagement;
+package com.asslpl.ainv;
 
 
 import android.support.annotation.NonNull;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.asslpl.asslplinventorymanagement">
+    package="com.asslpl.ainv">
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -15,12 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".WarehouseEntry"></activity>
-        <activity android:name=".ActivityChooser" />
-        <activity android:name=".view_inventory" />
-        <activity android:name=".search" />
-        <activity android:name=".user_onboarding" />
-        <activity android:name=".start_page">
+        <activity android:name="com.asslpl.ainv.ItemMasterEntry"></activity>
+        <activity android:name="com.asslpl.ainv.WarehouseEntry" />
+        <activity android:name="com.asslpl.ainv.ActivityChooser" />
+        <activity android:name="com.asslpl.ainv.view_inventory" />
+        <activity android:name="com.asslpl.ainv.search" />
+        <activity android:name="com.asslpl.ainv.user_onboarding" />
+        <activity android:name="com.asslpl.ainv.start_page">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
