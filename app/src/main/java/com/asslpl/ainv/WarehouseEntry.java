@@ -1,8 +1,13 @@
 package com.asslpl.ainv;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -12,16 +17,21 @@ import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Pattern;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class WarehouseEntry extends AppCompatActivity implements Validator.ValidationListener {
 
+    ArrayList<String> warehouseLocationSuggestions = new ArrayList<String>();
+
     @NotEmpty
     EditText warehouseNameView;
 
     @NotEmpty
-    EditText warehouseLocationView;
+    AutoCompleteTextView warehouseLocationView;
 
     @Length(max = 15, min = 15)
     @NotEmpty
@@ -47,13 +57,46 @@ public class WarehouseEntry extends AppCompatActivity implements Validator.Valid
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_warehouse_entry);
 
-        warehouseNameView = (EditText) findViewById(R.id.warehouseName);
-        warehouseLocationView = (EditText) findViewById(R.id.warehouseLocation);
-        gstinView = (EditText) findViewById(R.id.gstin);
-        contactNameView = (EditText) findViewById(R.id.contactName);
-        contactNumberView = (EditText) findViewById(R.id.contactNumber);
+        warehouseNameView = findViewById(R.id.warehouseName);
+        warehouseLocationView = findViewById(R.id.warehouseLocation);
+        gstinView = findViewById(R.id.gstin);
+        contactNameView = findViewById(R.id.contactName);
+        contactNumberView = findViewById(R.id.contactNumber);
 
+        // setting the validator to starting listening
         validator.setValidationListener(this);
+
+        // getting the warehouse locations
+        String testEndpoint = "http://157.245.99.108";
+        String getWarehouseDataURL = testEndpoint + "/api/get/warehouses";
+
+        JSONArray allLocationsArray;
+
+        HttpGetRequest warehouseGetter = new HttpGetRequest();
+        try {
+            String allItems = warehouseGetter.execute(getWarehouseDataURL).get();
+            allLocationsArray = new JSONArray(allItems);
+
+            for (int i = 0; i < allLocationsArray.length(); i++) {
+                String wLocation = allLocationsArray.getJSONObject(i).getString("warehouseLocation");
+                warehouseLocationSuggestions.add(wLocation);
+            }
+
+        } catch(Exception e) {
+            System.out.println(e);
+
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+            toast.show();
+
+            return;
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this, android.R.layout.select_dialog_item, warehouseLocationSuggestions);
+
+        warehouseLocationView.setThreshold(1);
+        warehouseLocationView.setAdapter(adapter);
     }
 
     public void enterNewWarehouse(View view) {
@@ -81,7 +124,7 @@ public class WarehouseEntry extends AppCompatActivity implements Validator.Valid
         try {
             searchResponse = insertHttp.execute(warehouseURL, searchRequests).get();
 
-            Toast toast = Toast.makeText(getApplicationContext(), searchResponse, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), "Warehouse Entry successful!", Toast.LENGTH_LONG);
             toast.show();
 
         } catch (ExecutionException e) {
@@ -89,6 +132,10 @@ public class WarehouseEntry extends AppCompatActivity implements Validator.Valid
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        Intent activityChooserPage = new Intent(getApplicationContext(), ActivityChooser.class);
+        startActivity(activityChooserPage);
+        finish();
     }
 
     public void onValidationFailed(List<ValidationError> errors) {

@@ -1,8 +1,12 @@
 package com.asslpl.ainv;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -10,13 +14,18 @@ import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ItemMasterEntry extends AppCompatActivity implements Validator.ValidationListener {
 
+    ArrayList<String> itemNameSuggestions = new ArrayList<String>();
+
     @NotEmpty
-    EditText itemNameView;
+    AutoCompleteTextView itemNameView;
 
     @NotEmpty
     EditText itemVariantView;
@@ -66,7 +75,40 @@ public class ItemMasterEntry extends AppCompatActivity implements Validator.Vali
         rawPerSmallView = findViewById(R.id.rawPerSmall);
         smallPerBigView = findViewById(R.id.smallPerBig);
 
+        // setting the validator to starting listening
         validator.setValidationListener(this);
+
+        // getting the warehouse locations
+        String testEndpoint = "http://157.245.99.108";
+        String getItemNameDataURL = testEndpoint + "/api/get/items?only=itemName";
+
+        JSONArray allItemsArray;
+
+        HttpGetRequest itemGetter = new HttpGetRequest();
+        try {
+            String allItems = itemGetter.execute(getItemNameDataURL).get();
+            allItemsArray = new JSONArray(allItems);
+
+            for (int i = 0; i < allItemsArray.length(); i++) {
+                String iName = allItemsArray.getString(i);
+                itemNameSuggestions.add(iName);
+            }
+
+        } catch(Exception e) {
+            System.out.println(e);
+
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+            toast.show();
+
+            return;
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this, android.R.layout.select_dialog_item, itemNameSuggestions);
+
+        itemNameView.setThreshold(1);
+        itemNameView.setAdapter(adapter);
     }
 
     public void enterNewItem(View view) {
@@ -95,7 +137,7 @@ public class ItemMasterEntry extends AppCompatActivity implements Validator.Vali
         try {
             searchResponse = insertHttp.execute(itemMasterURL, searchRequests).get();
 
-            Toast toast = Toast.makeText(getApplicationContext(), searchResponse, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), "Item Entry successful!", Toast.LENGTH_LONG);
             toast.show();
 
         } catch (ExecutionException e) {
@@ -103,6 +145,10 @@ public class ItemMasterEntry extends AppCompatActivity implements Validator.Vali
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        Intent activityChooserPage = new Intent(getApplicationContext(), ActivityChooser.class);
+        startActivity(activityChooserPage);
+        finish();
     }
 
     @Override
