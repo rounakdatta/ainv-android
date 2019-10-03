@@ -15,13 +15,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.asslpl.ainv.ItemMasterEntry"></activity>
-        <activity android:name="com.asslpl.ainv.WarehouseEntry" />
-        <activity android:name="com.asslpl.ainv.ActivityChooser" />
-        <activity android:name="com.asslpl.ainv.view_inventory" />
-        <activity android:name="com.asslpl.ainv.search" />
-        <activity android:name="com.asslpl.ainv.user_onboarding" />
-        <activity android:name="com.asslpl.ainv.start_page">
+        <activity
+            android:name=".Transaction"
+            android:label="@string/title_activity_transaction"
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar"></activity>
+        <activity android:name=".ItemMasterEntry" />
+        <activity android:name=".WarehouseEntry" />
+        <activity android:name=".ActivityChooser" />
+        <activity android:name=".view_inventory" />
+        <activity android:name=".search" />
+        <activity android:name=".user_onboarding" />
+        <activity android:name=".start_page">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

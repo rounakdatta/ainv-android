@@ -27,4 +27,9 @@ public class ActivityChooser extends AppCompatActivity {
         Intent itemEntryPage = new Intent(getApplicationContext(), ItemMasterEntry.class);
         startActivity(itemEntryPage);
     }
+
+    public void gotoTransactionPage(View view) {
+        Intent transactionPage = new Intent(getApplicationContext(), Transaction.class);
+        startActivity(transactionPage);
+    }
 }

@@ -26,5 +26,6 @@
         <item>Item 2</item>
         <item>Item 3</item>
     </string-array>
+    <string name="title_activity_transaction">Transaction</string>
 
 </resources>
