@@ -112,6 +112,10 @@ public class Transaction extends AppCompatActivity {
 //        dialog.getWindow().setGravity(Gravity.END);
     }
 
+    public void gotoThirdPage(View view) {
+        mViewPager.setCurrentItem(2);
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -145,7 +149,7 @@ public class Transaction extends AppCompatActivity {
             int pageNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 
             if (pageNumber == 1) {
-                // first page - first part of the form
+                // first page - first details
                 rootView = inflater.inflate(R.layout.fragment_transaction_p1, container, false);
 
                 Button dobSelector = rootView.findViewById(R.id.date);
@@ -157,11 +161,14 @@ public class Transaction extends AppCompatActivity {
                     }
                 });
 
-            } else {
-                // second page - second part of the form
+            } else if (pageNumber == 2) {
+                // second page - quntity details
                 rootView = inflater.inflate(R.layout.fragment_transaction_p2, container, false);
 
 
+            } else {
+                // third page - item valuation details
+                rootView = inflater.inflate(R.layout.fragment_transaction_p3, container, false);
             }
 
 //            TextView textView = (TextView) rootView.findViewById(R.id.transactionHeading);
@@ -190,7 +197,7 @@ public class Transaction extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 2;
+            return 3;
         }
     }
 }
