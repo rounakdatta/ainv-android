@@ -13,6 +13,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,6 +33,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,10 +45,14 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class Transaction extends AppCompatActivity {
+
+    Dialog dialog;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -100,8 +108,76 @@ public class Transaction extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    public List<String> getItemInventory(View view, String warehouseId, String itemId) {
+
+        String testEndpoint = "http://157.245.99.108";
+        String rateURL = testEndpoint + "/api/get/rate";
+        String searchRequests = "itemId=" + itemId + "&warehouseId=" + warehouseId;
+
+        String searchResponse = null;
+        JSONObject searchResponseDict = null;
+
+        HttpPostRequest ratehHttp = new HttpPostRequest();
+        try {
+            searchResponse = ratehHttp.execute(rateURL, searchRequests).get();
+            searchResponseDict = new JSONArray(searchResponse).getJSONObject(0);
+
+            System.out.println(searchResponseDict);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String rawPerSmall = "0";
+        String smallPerBig = "0";
+        String cartonQuantity = "0";
+
+        try {
+
+            rawPerSmall = searchResponseDict.getString("rawPerSmall");
+            smallPerBig = searchResponseDict.getString("smallPerBig");
+            cartonQuantity = searchResponseDict.getString("cartonQuantity");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return Arrays.asList(rawPerSmall, smallPerBig, cartonQuantity);
+
+    }
+
     public void gotoSecondPage(View view) {
-        mViewPager.setCurrentItem(1);
+
+
+        // get the itemId and warehouseId from first page
+        TextView itemIdTv = mViewPager.getRootView().findViewById(R.id.itemId);
+        TextView warehouseIdTv = mViewPager.getRootView().findViewById(R.id.warehouseId);
+
+
+        try {
+            String itemId = String.valueOf(itemIdTv.getText());
+            String warehouseId = String.valueOf(warehouseIdTv.getText());
+
+            List<String> response = getItemInventory(view, warehouseId, itemId);
+
+            mViewPager.setCurrentItem(1);
+            TextView currentTv = mViewPager.getRootView().findViewById(R.id.currentValue);
+            currentTv.setText(response.get(2));
+
+            TextView secretRate1 = mViewPager.getRootView().findViewById(R.id.secretRate1);
+            TextView secretRate2 = mViewPager.getRootView().findViewById(R.id.secretRate2);
+
+            secretRate1.setText(response.get(0));
+            secretRate2.setText(response.get(1));
+
+        } catch (Exception e) {
+            mViewPager.setCurrentItem(1);
+        }
     }
 
     public void gotoFirstPage(View view) {
@@ -116,19 +192,56 @@ public class Transaction extends AppCompatActivity {
     }
 
     public void selectNewRates(View view) {
-        Dialog dialog = new Dialog(context);
+        dialog = new Dialog(context);
         dialog.setContentView(R.layout.custom_rate);
         dialog.show();
 
         dialog.setCancelable(true);
-//        dialog.getWindow().setLayout(((getWidth(context) / 100) * 90), LinearLayout.LayoutParams.MATCH_PARENT);
-//        dialog.getWindow().setGravity(Gravity.END);
+
+        final TextView secretRate1 = mViewPager.getRootView().findViewById(R.id.secretRate1);
+        final TextView secretRate2 = mViewPager.getRootView().findViewById(R.id.secretRate2);
+        final TextView quantityDescription = mViewPager.getRootView().findViewById(R.id.quantityDescription);
+        final EditText bigQuantity = mViewPager.getRootView().findViewById(R.id.bigQuantity);
+        final TextView totalPcs = mViewPager.getRootView().findViewById(R.id.totalPcs);
+
+        final TextView pcsPerBox = dialog.findViewById(R.id.pcsPerBox);
+        final TextView boxPerCarton = dialog.findViewById(R.id.boxPerCarton);
+
+        pcsPerBox.setText(secretRate1.getText());
+        boxPerCarton.setText(secretRate2.getText());
+
+        Button updateButton = dialog.findViewById(R.id.updateButton);
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                secretRate1.setText(pcsPerBox.getText());
+                secretRate2.setText(boxPerCarton.getText());
+                dialog.dismiss();
+
+                int cartonCount = Integer.parseInt(String.valueOf(bigQuantity.getText()));
+                int boxCount = cartonCount * Integer.parseInt(String.valueOf(secretRate1.getText()));
+                int pcsCount = boxCount * Integer.parseInt(String.valueOf(secretRate2.getText()));
+
+                String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                quantityDescription.setText(quantityDisplayer);
+
+                totalPcs.setText(Integer.toString(pcsCount));
+
+            }
+        });
     }
 
     public void gotoThirdPage(View view) {
-        mViewPager.setCurrentItem(2);
-    }
 
+        TextView totalPcs = mViewPager.getRootView().findViewById(R.id.totalPcs);
+        String totalPcsCount = String.valueOf(totalPcs.getText());
+
+        mViewPager.setCurrentItem(2);
+
+        TextView totalPieces = mViewPager.getRootView().findViewById(R.id.totalPieces);
+        totalPieces.setText(totalPcsCount);
+    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -139,7 +252,8 @@ public class Transaction extends AppCompatActivity {
         Spinner itemVariantSelector;
         Spinner warehouseSelector;
 
-        TextView currentStock;
+        TextView itemIdTv;
+        TextView warehouseIdTv;
 
         ArrayList<String> itemNames = null;
         ArrayList<String> itemVariants = null;
@@ -154,6 +268,31 @@ public class Transaction extends AppCompatActivity {
         String WAREHOUSEID = "-1";
 
         View rootView;
+
+
+        // for the second view
+        EditText bigQuantityEntry;
+        TextView currentValue;
+        TextView changeValue;
+        TextView finalValue;
+        RadioGroup entryExitSelector;
+        TextView comeOrGo;
+        TextView quantityDescription;
+
+        TextView secretRate1;
+        TextView secretRate2;
+
+        TextView totalPcs;
+
+        EditText assdValue;
+        EditText dutyValue;
+        EditText gstValue;
+        EditText totalValue;
+        EditText valuePerPiece;
+        TextView totalPcsP3;
+
+        float totalPiecesP3;
+
 
         /**
          * The fragment argument representing the section number for this
@@ -174,49 +313,6 @@ public class Transaction extends AppCompatActivity {
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
-        }
-
-        public void getItemInventory(View view, String warehouseId, String itemId) {
-
-            String testEndpoint = "http://157.245.99.108";
-            String rateURL = testEndpoint + "/api/get/rate";
-            String searchRequests = "itemId=" + itemId + "&warehouseId=" + warehouseId;
-
-            String searchResponse = null;
-            JSONObject searchResponseDict = null;
-
-            HttpPostRequest ratehHttp = new HttpPostRequest();
-            try {
-                searchResponse = ratehHttp.execute(rateURL, searchRequests).get();
-                searchResponseDict = new JSONArray(searchResponse).getJSONObject(0);
-
-                System.out.println(searchResponseDict);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            String rawPerSmall = "0";
-            String smallPerBig = "0";
-            String cartonQuantity = "0";
-
-            try {
-
-                rawPerSmall = searchResponseDict.getString("rawPerSmall");
-                smallPerBig = searchResponseDict.getString("smallPerBig");
-                cartonQuantity = searchResponseDict.getString("cartonQuantity");
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println(currentStock.getText());
-            // currentStock.setText(cartonQuantity);
-
         }
 
         @Override
@@ -248,6 +344,9 @@ public class Transaction extends AppCompatActivity {
 
                 itemSelector = rootView.findViewById(R.id.itemName);
                 itemVariantSelector = rootView.findViewById(R.id.itemVariant);
+
+                itemIdTv = rootView.findViewById(R.id.itemId);
+                warehouseIdTv = rootView.findViewById(R.id.warehouseId);
 
                 // logic for populating the spinner and selecting the first item by default
                 HttpGetRequest itemsGetter = new HttpGetRequest();
@@ -283,6 +382,7 @@ public class Transaction extends AppCompatActivity {
 
                     // set the default capturing variable (index 0 variant) of first item
                     ITEMID = allItemsArray.getJSONObject(0).getJSONArray("itemId").getString(0);
+                    itemIdTv.setText(ITEMID);
 
 
                 } catch(Exception e) {
@@ -324,6 +424,7 @@ public class Transaction extends AppCompatActivity {
                         // set the default capturing variable (index 0 variant) on other item select
                         try {
                             ITEMID = allItemsArray.getJSONObject(position).getJSONArray("itemId").getString(0);
+                            itemIdTv.setText(ITEMID);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -345,6 +446,7 @@ public class Transaction extends AppCompatActivity {
                         // set the default capturing variable (index 0 variant) on other item select
                         try {
                             ITEMID = allItemsArray.getJSONObject(itemParentPosition).getJSONArray("itemId").getString(position);
+                            itemIdTv.setText(ITEMID);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -378,6 +480,7 @@ public class Transaction extends AppCompatActivity {
 
                     // by default, the first warehouse will be selected
                     WAREHOUSEID = warehouseArray.getJSONObject(0).getString("warehouseId");
+                    warehouseIdTv.setText(WAREHOUSEID);
 
 
                 } catch (InterruptedException e) {
@@ -395,6 +498,7 @@ public class Transaction extends AppCompatActivity {
 
                         try {
                             WAREHOUSEID = warehouseArray.getJSONObject(position).getString("warehouseId");
+                            warehouseIdTv.setText(WAREHOUSEID);
 
                             // get the inventory details for this configuration
                             // getItemInventory(getView(), WAREHOUSEID, ITEMID);
@@ -417,16 +521,250 @@ public class Transaction extends AppCompatActivity {
                 // second page - quantity details
                 rootView = inflater.inflate(R.layout.fragment_transaction_p2, container, false);
 
+                bigQuantityEntry = rootView.findViewById(R.id.bigQuantity);
+
+                currentValue = rootView.findViewById(R.id.currentValue);
+                changeValue = rootView.findViewById(R.id.changeValue);
+                finalValue = rootView.findViewById(R.id.finalValue);
+
+                quantityDescription = rootView.findViewById(R.id.quantityDescription);
+
+                secretRate1 = rootView.findViewById(R.id.secretRate1);
+                secretRate2 = rootView.findViewById(R.id.secretRate2);
+
+                totalPcs = rootView.findViewById(R.id.totalPcs);
+
+                entryExitSelector = rootView.findViewById(R.id.radioSelection);
+                comeOrGo = rootView.findViewById(R.id.comeOrGo);
+
+                entryExitSelector.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                        // understand which of the radio buttons has been clicked
+                        if (R.id.incomingRadio == checkedId) {
+                            comeOrGo.setText("+");
+                        } else if (R.id.outgoingRadio == checkedId) {
+                            comeOrGo.setText("-");
+                        }
+
+                    }
+                });
+
+                bigQuantityEntry.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        int calculatedValue = 0;
+                        int rate1 = Integer.parseInt(secretRate1.getText().toString());
+                        int rate2 = Integer.parseInt(secretRate2.getText().toString());
+
+                        try {
+                            if (comeOrGo.getText() == "+") {
+
+                                changeValue.setText("+ " + s.toString());
+                                calculatedValue = Integer.parseInt(String.valueOf(currentValue.getText())) + Integer.parseInt(s.toString());
+
+                                int cartonCount = Integer.parseInt(s.toString());
+                                int boxCount = cartonCount * rate1;
+                                int pcsCount = boxCount * rate2;
+
+                                String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                                quantityDescription.setText(quantityDisplayer);
+
+                                totalPcs.setText(Integer.toString(pcsCount));
+
+                            } else {
+
+                                changeValue.setText("- " + s.toString());
+                                calculatedValue = Integer.parseInt(String.valueOf(currentValue.getText())) - Integer.parseInt(s.toString());
+
+                                int cartonCount = Integer.parseInt(s.toString());
+                                int boxCount = cartonCount * rate1;
+                                int pcsCount = boxCount * rate2;
+
+                                String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                                quantityDescription.setText(quantityDisplayer);
+
+                                totalPcs.setText(Integer.toString(pcsCount));
+
+                            }
+                        } catch(Exception e) {
+                            s = "0";
+                            changeValue.setText("+ " + s.toString());
+                            calculatedValue = Integer.parseInt(String.valueOf(currentValue.getText()));
+
+                            int cartonCount = Integer.parseInt(s.toString());
+                            int boxCount = cartonCount * rate1;
+                            int pcsCount = boxCount * rate2;
+
+                            String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                            quantityDescription.setText(quantityDisplayer);
+
+                            totalPcs.setText(Integer.toString(pcsCount));
+                        }
+
+                        // System.out.println(calculatedValue);
+                        finalValue.setText(Integer.toString(calculatedValue));
+
+                    }
+
+                    @Override
+
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
 
             } else if (pageNumber == 3) {
                 // third page - item valuation details
                 rootView = inflater.inflate(R.layout.fragment_transaction_p3, container, false);
+
+                assdValue = rootView.findViewById(R.id.assdValue);
+                dutyValue = rootView.findViewById(R.id.dutyValue);
+                gstValue = rootView.findViewById(R.id.gstValue);
+                totalValue = rootView.findViewById(R.id.totalValue);
+                valuePerPiece = rootView.findViewById(R.id.valuePerPiece);
+
+                totalPcsP3 = rootView.findViewById(R.id.totalPieces);
+
+                assdValue.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        float assdValueFloat = 0;
+                        float dutyValueFloat = 0;
+                        float gstValueFloat = 0;
+
+                        try {
+                            assdValueFloat = Float.parseFloat(String.valueOf(assdValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        try {
+                            dutyValueFloat = Float.parseFloat(String.valueOf(dutyValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        try {
+                            gstValueFloat = Float.parseFloat(String.valueOf(gstValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+
+                        float totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
+                        totalValue.setText(Float.toString(totalValueFloat));
+                        totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
+                        valuePerPiece.setText(Float.toString(totalValueFloat / totalPiecesP3));
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                dutyValue.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        float assdValueFloat = 0;
+                        float dutyValueFloat = 0;
+                        float gstValueFloat = 0;
+
+                        try {
+                            assdValueFloat = Float.parseFloat(String.valueOf(assdValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        try {
+                            dutyValueFloat = Float.parseFloat(String.valueOf(dutyValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        try {
+                            gstValueFloat = Float.parseFloat(String.valueOf(gstValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+
+                        float totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
+                        totalValue.setText(Float.toString(totalValueFloat));
+                        totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
+                        valuePerPiece.setText(Float.toString(totalValueFloat / totalPiecesP3));
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                gstValue.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        float assdValueFloat = 0;
+                        float dutyValueFloat = 0;
+                        float gstValueFloat = 0;
+
+                        try {
+                            assdValueFloat = Float.parseFloat(String.valueOf(assdValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        try {
+                            dutyValueFloat = Float.parseFloat(String.valueOf(dutyValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        try {
+                            gstValueFloat = Float.parseFloat(String.valueOf(gstValue.getText()));
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+
+                        float totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
+                        totalValue.setText(Float.toString(totalValueFloat));
+                        totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
+                        valuePerPiece.setText(Float.toString(totalValueFloat / totalPiecesP3));
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
             }
 
 //            TextView textView = (TextView) rootView.findViewById(R.id.transactionHeading);
 //            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            System.out.println("NOW PREINTING VIEW ID");
-            System.out.println(rootView.getId());
+
             return rootView;
         }
     }
