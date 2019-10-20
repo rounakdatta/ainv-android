@@ -57,8 +57,8 @@ public class search extends AppCompatActivity {
         CheckBox selectAllLocations = (CheckBox) findViewById(R.id.selectAllLocations);
 
 
-        String testEndpoint = "http://157.245.99.108";
-        String getcountryDataURL = testEndpoint + "/api/get/items";
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String getcountryDataURL = testEndpoint + "/api/get/items/";
 
         ArrayList<String> itemNames = null;
 
@@ -163,7 +163,7 @@ public class search extends AppCompatActivity {
         });
 
 
-        String getWarehouseDataURL = testEndpoint + "/api/get/warehouses";
+        String getWarehouseDataURL = testEndpoint + "/api/get/warehouses/";
 
         ArrayList<String> countryNames = null;
 

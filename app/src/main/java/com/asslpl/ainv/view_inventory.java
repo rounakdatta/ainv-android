@@ -39,8 +39,8 @@ public class view_inventory extends AppCompatActivity {
         Log.e("locations", locationsRequest);
         Log.e("ids", idRequest);
 
-        String testEndpoint = "http://157.245.99.108";
-        String searchURL = testEndpoint + "/api/search/items";
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String searchURL = testEndpoint + "/api/search/items/";
         String searchRequests = "itemId=" + idRequest + "&locations=" + locationsRequest;
 
         String searchResponse = "NULL";

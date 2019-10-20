@@ -111,8 +111,8 @@ public class Transaction extends AppCompatActivity {
 
     public List<String> getItemInventory(View view, String warehouseId, String itemId) {
 
-        String testEndpoint = "http://157.245.99.108";
-        String rateURL = testEndpoint + "/api/get/rate";
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String rateURL = testEndpoint + "/api/get/rate/";
         String searchRequests = "itemId=" + itemId + "&warehouseId=" + warehouseId;
 
         String searchResponse = null;
@@ -338,8 +338,8 @@ public class Transaction extends AppCompatActivity {
 
                 // set the item and warehouse data
 
-                String testEndpoint = "http://157.245.99.108";
-                String itemDataURL = testEndpoint + "/api/get/items";
+                String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                String itemDataURL = testEndpoint + "/api/get/items/";
 
 
                 itemSelector = rootView.findViewById(R.id.itemName);
@@ -463,7 +463,7 @@ public class Transaction extends AppCompatActivity {
                 warehouseSelector = rootView.findViewById(R.id.warehouse);
 
                 // logic for populating the warehouse spinner
-                String warehouseDataURL = testEndpoint + "/api/get/all/warehouses";
+                String warehouseDataURL = testEndpoint + "/api/get/all/warehouses/";
                 HttpGetRequest warehouseGetter = new HttpGetRequest();
                 try {
                     String allWarehouses = warehouseGetter.execute(warehouseDataURL).get();

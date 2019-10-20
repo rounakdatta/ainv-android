@@ -79,8 +79,8 @@ public class ItemMasterEntry extends AppCompatActivity implements Validator.Vali
         validator.setValidationListener(this);
 
         // getting the warehouse locations
-        String testEndpoint = "http://157.245.99.108";
-        String getItemNameDataURL = testEndpoint + "/api/get/items?only=itemName";
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String getItemNameDataURL = testEndpoint + "/api/get/items/?only=itemName";
 
         JSONArray allItemsArray;
 
@@ -127,8 +127,8 @@ public class ItemMasterEntry extends AppCompatActivity implements Validator.Vali
         rawPerSmall = rawPerSmallView.getText().toString();
         smallPerBig = smallPerBigView.getText().toString();
 
-        String testEndpoint = "http://157.245.99.108";
-        String itemMasterURL = testEndpoint + "/api/put/itemmaster";
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String itemMasterURL = testEndpoint + "/api/put/itemmaster/";
 
         String searchResponse = "NULL";
         String searchRequests = "itemName=" + itemName + "&itemVariant=" + itemVariant+ "&hsnCode=" + hsnCode + "&uomRaw=" + uomRaw + "&uomSmall=" + uomSmall + "&uomBig=" + uomBig + "&rawPerSmall=" + rawPerSmall + "&smallPerBig=" + smallPerBig;

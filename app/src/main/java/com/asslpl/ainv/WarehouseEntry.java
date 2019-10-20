@@ -67,8 +67,8 @@ public class WarehouseEntry extends AppCompatActivity implements Validator.Valid
         validator.setValidationListener(this);
 
         // getting the warehouse locations
-        String testEndpoint = "http://157.245.99.108";
-        String getWarehouseDataURL = testEndpoint + "/api/get/warehouses";
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String getWarehouseDataURL = testEndpoint + "/api/get/warehouses/";
 
         JSONArray allLocationsArray;
 
@@ -114,8 +114,8 @@ public class WarehouseEntry extends AppCompatActivity implements Validator.Valid
         contactName = contactNameView.getText().toString();
         contactNumber = contactNumberView.getText().toString();
 
-        String testEndpoint = "http://157.245.99.108";
-        String warehouseURL = testEndpoint + "/api/put/warehouse";
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String warehouseURL = testEndpoint + "/api/put/warehouse/";
 
         String searchResponse = "NULL";
         String searchRequests = "warehouseName=" + warehouseName + "&warehouseLocation=" + warehouseLocation + "&gstin=" + gstin+ "&contactName=" + contactName + "&contactNumber=" + contactNumber;
