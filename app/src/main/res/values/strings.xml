@@ -20,7 +20,7 @@
     <string name="show_multi_select_dialog">lets select some</string>
     <string name="err_number">Phone number is incorrect!</string>
 
-    <string name="serverEndpoint">http://157.245.99.108/ainv</string>
+    <string name="serverEndpoint">https://genesisapp.ml/ainv</string>
 
 
     <string-array name="items">

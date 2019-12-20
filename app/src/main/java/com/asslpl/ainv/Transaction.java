@@ -157,6 +157,7 @@ public class Transaction extends AppCompatActivity {
         // get the itemId and warehouseId from first page
         TextView itemIdTv = mViewPager.getRootView().findViewById(R.id.itemId);
         TextView warehouseIdTv = mViewPager.getRootView().findViewById(R.id.warehouseId);
+        TextView comeOrGoTv = mViewPager.getRootView().findViewById(R.id.comeOrGo);
 
 
         try {
@@ -164,6 +165,10 @@ public class Transaction extends AppCompatActivity {
             String warehouseId = String.valueOf(warehouseIdTv.getText());
 
             List<String> response = getItemInventory(view, warehouseId, itemId);
+
+            mViewPager.setCurrentItem(2);
+            TextView comeOrGoThirdPageTv = mViewPager.getRootView().findViewById(R.id.comeOrGoThird);
+            comeOrGoThirdPageTv.setText(comeOrGoTv.getText());
 
             mViewPager.setCurrentItem(1);
             TextView currentTv = mViewPager.getRootView().findViewById(R.id.currentValue);
@@ -175,6 +180,9 @@ public class Transaction extends AppCompatActivity {
             secretRate1.setText(response.get(0));
             secretRate2.setText(response.get(1));
 
+            TextView comeOrGoSecondPageTv = mViewPager.getRootView().findViewById(R.id.comeOrGoSecond);
+            comeOrGoSecondPageTv.setText(comeOrGoTv.getText());
+
         } catch (Exception e) {
             mViewPager.setCurrentItem(1);
         }
@@ -182,6 +190,47 @@ public class Transaction extends AppCompatActivity {
 
     public void gotoFirstPage(View view) {
         mViewPager.setCurrentItem(0);
+    }
+
+    // called when CONFIRM TRANSACTION button is hit - posts the collected data to the server
+    public void submitTransaction(View view) {
+
+        // picking values from the first page
+        mViewPager.setCurrentItem(0);
+        TextView fe1p1 = mViewPager.getRootView().findViewById(R.id.billOfEntry);
+        TextView fe2p1 = mViewPager.getRootView().findViewById(R.id.date);
+        TextView fe3p1 = mViewPager.getRootView().findViewById(R.id.itemId);
+        TextView fe4p1 = mViewPager.getRootView().findViewById(R.id.warehouseId);
+        TextView fe5p1 = mViewPager.getRootView().findViewById(R.id.comeOrGo);
+
+        // picking values from the second page
+        mViewPager.setCurrentItem(1);
+        TextView fe1p2 = mViewPager.getRootView().findViewById(R.id.bigQuantity);
+        TextView fe2p2 = mViewPager.getRootView().findViewById(R.id.currentValue);
+        TextView fe3p2 = mViewPager.getRootView().findViewById(R.id.changeValue);
+        TextView fe4p2 = mViewPager.getRootView().findViewById(R.id.finalValue);
+        TextView fe5p2 = mViewPager.getRootView().findViewById(R.id.secretRate1);
+        TextView fe6p2 = mViewPager.getRootView().findViewById(R.id.secretRate2);
+        TextView fe7p2 = mViewPager.getRootView().findViewById(R.id.totalPcs);
+
+        // picking values from the third page
+        mViewPager.setCurrentItem(2);
+        TextView fe1p3 = mViewPager.getRootView().findViewById(R.id.assdValue);
+        TextView fe2p3 = mViewPager.getRootView().findViewById(R.id.dutyValue);
+        TextView fe3p3 = mViewPager.getRootView().findViewById(R.id.gstValue);
+        TextView fe4p3 = mViewPager.getRootView().findViewById(R.id.totalValue);
+        TextView fe5p3 = mViewPager.getRootView().findViewById(R.id.totalValue);
+        TextView fe6p3 = mViewPager.getRootView().findViewById(R.id.valuePerPiece);
+        TextView fe7p3 = mViewPager.getRootView().findViewById(R.id.totalPieces);
+        TextView fe8p3 = mViewPager.getRootView().findViewById(R.id.isPaid);
+        TextView fe9p3 = mViewPager.getRootView().findViewById(R.id.date);
+
+        // posting the data to the server
+        System.out.println(fe1p1.getText());
+        System.out.println("------");
+        System.out.println(fe1p2.getText());
+        System.out.println("------");
+        System.out.println(fe1p3.getText());
     }
 
     public static int getWidth(Context context) {
@@ -241,6 +290,34 @@ public class Transaction extends AppCompatActivity {
 
         TextView totalPieces = mViewPager.getRootView().findViewById(R.id.totalPieces);
         totalPieces.setText(totalPcsCount);
+
+        TextView comeOrGoThirdPage = mViewPager.getRootView().findViewById(R.id.comeOrGoThird);
+        TextView paidTv = mViewPager.getRootView().findViewById(R.id.isPaid);
+        TextView paymentDate = mViewPager.getRootView().findViewById(R.id.date);
+        EditText assdValue = mViewPager.getRootView().findViewById(R.id.assdValue);
+
+        if (comeOrGoThirdPage.getText() == "+") {
+            paidTv.setVisibility(View.INVISIBLE);
+            paymentDate.setVisibility(View.INVISIBLE);
+
+            TextView assessedValueHeader = mViewPager.getRootView().findViewById(R.id.assdValueHeader);
+            assessedValueHeader.setVisibility(View.VISIBLE);
+            assdValue.setVisibility(View.VISIBLE);
+
+            TextView dutyValueHeader = mViewPager.getRootView().findViewById(R.id.dutyValueHeader);
+            dutyValueHeader.setText("Duty Value");
+
+        } else {
+            paidTv.setVisibility(View.VISIBLE);
+            paymentDate.setVisibility(View.VISIBLE);
+
+            TextView assessedValueHeader = mViewPager.getRootView().findViewById(R.id.assdValueHeader);
+            assessedValueHeader.setVisibility(View.INVISIBLE);
+            assdValue.setVisibility(View.INVISIBLE);
+
+            TextView dutyValueHeader = mViewPager.getRootView().findViewById(R.id.dutyValueHeader);
+            dutyValueHeader.setText("Material Value");
+        }
     }
 
     /**
@@ -277,6 +354,8 @@ public class Transaction extends AppCompatActivity {
         TextView finalValue;
         RadioGroup entryExitSelector;
         TextView comeOrGo;
+        TextView comeOrGoSecondPage;
+        TextView comeOrGoThirdPage;
         TextView quantityDescription;
 
         TextView secretRate1;
@@ -290,6 +369,9 @@ public class Transaction extends AppCompatActivity {
         EditText totalValue;
         EditText valuePerPiece;
         TextView totalPcsP3;
+
+        TextView billOrSalesHeader;
+        EditText billOrSalesText;
 
         float totalPiecesP3;
 
@@ -325,6 +407,31 @@ public class Transaction extends AppCompatActivity {
             if (pageNumber == 1) {
                 // first page - first details
                 rootView = inflater.inflate(R.layout.fragment_transaction_p1, container, false);
+
+                entryExitSelector = rootView.findViewById(R.id.radioSelection);
+                comeOrGo = rootView.findViewById(R.id.comeOrGo);
+
+                // changing the bill-of-entry header dynamically
+                billOrSalesHeader = rootView.findViewById(R.id.billOfEntryHeader);
+                billOrSalesText = rootView.findViewById(R.id.billOfEntry);
+
+                entryExitSelector.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                        // understand which of the radio buttons has been clicked
+                        if (R.id.incomingRadio == checkedId) {
+                            comeOrGo.setText("+");
+                            billOrSalesHeader.setText("Bill of Entry");
+                            billOrSalesText.setHint("Bill of Entry Number");
+                        } else if (R.id.outgoingRadio == checkedId) {
+                            comeOrGo.setText("-");
+                            billOrSalesHeader.setText("Sales Invoice");
+                            billOrSalesText.setHint("Sales Invoice Number");
+                        }
+
+                    }
+                });
 
                 // set the calendar dialog
                 Button dobSelector = rootView.findViewById(R.id.date);
@@ -518,6 +625,7 @@ public class Transaction extends AppCompatActivity {
 
 
             } else if (pageNumber == 2) {
+
                 // second page - quantity details
                 rootView = inflater.inflate(R.layout.fragment_transaction_p2, container, false);
 
@@ -534,22 +642,7 @@ public class Transaction extends AppCompatActivity {
 
                 totalPcs = rootView.findViewById(R.id.totalPcs);
 
-                entryExitSelector = rootView.findViewById(R.id.radioSelection);
-                comeOrGo = rootView.findViewById(R.id.comeOrGo);
-
-                entryExitSelector.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                        // understand which of the radio buttons has been clicked
-                        if (R.id.incomingRadio == checkedId) {
-                            comeOrGo.setText("+");
-                        } else if (R.id.outgoingRadio == checkedId) {
-                            comeOrGo.setText("-");
-                        }
-
-                    }
-                });
+                comeOrGoSecondPage = rootView.findViewById(R.id.comeOrGoSecond);
 
                 bigQuantityEntry.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -565,7 +658,7 @@ public class Transaction extends AppCompatActivity {
                         int rate2 = Integer.parseInt(secretRate2.getText().toString());
 
                         try {
-                            if (comeOrGo.getText() == "+") {
+                            if (comeOrGoSecondPage.getText() == "+") {
 
                                 changeValue.setText("+ " + s.toString());
                                 calculatedValue = Integer.parseInt(String.valueOf(currentValue.getText())) + Integer.parseInt(s.toString());
@@ -633,6 +726,19 @@ public class Transaction extends AppCompatActivity {
                 valuePerPiece = rootView.findViewById(R.id.valuePerPiece);
 
                 totalPcsP3 = rootView.findViewById(R.id.totalPieces);
+
+                // payment date handler
+                Button payDobSelector = rootView.findViewById(R.id.date);
+                payDobSelector.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogFragment newFragment = new SelectDateFragment();
+                        newFragment.show(getFragmentManager(), "Date Picker");
+                    }
+                });
+
+                // incoming or outgoing handler
+                comeOrGoThirdPage = rootView.findViewById(R.id.comeOrGoThird);
 
                 assdValue.addTextChangedListener(new TextWatcher() {
                     @Override
