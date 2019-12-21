@@ -108,7 +108,7 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
         final TextView textView = new TextView(getContext());
         textView.setText(value);
         textView.setPadding(20, 10, 20, 10);
-        textView.setTextSize(30);
+        textView.setTextSize(20);
         return textView;
     }
 

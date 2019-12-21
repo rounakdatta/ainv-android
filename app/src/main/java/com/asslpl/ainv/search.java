@@ -163,7 +163,7 @@ public class search extends AppCompatActivity {
         });
 
 
-        String getWarehouseDataURL = testEndpoint + "/api/get/warehouses/";
+        String getWarehouseDataURL = testEndpoint + "/api/get/all/warehouses/";
 
         ArrayList<String> countryNames = null;
 
@@ -174,21 +174,23 @@ public class search extends AppCompatActivity {
 
             countryNames = new ArrayList<>();
             for (int i = 0; i < allCountriesArray.length(); i++) {
-                String wLocation = allCountriesArray.getJSONObject(i).getString("warehouseLocation");
+                String wLocation = allCountriesArray.getJSONObject(i).getString("warehouseName");
 
                 countryNames.add(wLocation);
                 listOfCountries.add(new MultiSelectModel(i, wLocation));
 
-                JSONArray wIds = allCountriesArray.getJSONObject(i).getJSONArray("warehouseId");
-//                for (int j = 0; j < wIds.length(); j++) {
-//                    warehouseLocation2IdMapper.put(wLocation, wIds.getString(j));
+//                JSONArray wIds = allCountriesArray.getJSONObject(i).getJSONArray("warehouseId");
+////                for (int j = 0; j < wIds.length(); j++) {
+////                    warehouseLocation2IdMapper.put(wLocation, wIds.getString(j));
+////                }
+//
+//                // String outputLocation = TextUtils.join(" ", (Iterable) wIds);
+//                String outputLocation = "";
+//                for (int k = 0; k <wIds.length(); k++) {
+//                    outputLocation += (wIds.getString(k) + " ");
 //                }
 
-                // String outputLocation = TextUtils.join(" ", (Iterable) wIds);
-                String outputLocation = "";
-                for (int k = 0; k <wIds.length(); k++) {
-                    outputLocation += (wIds.getString(k) + " ");
-                }
+                String outputLocation = allCountriesArray.getJSONObject(i).getString("warehouseId");
                 warehouseLocation2IdMapper.put(wLocation, outputLocation);
             }
 
@@ -240,7 +242,7 @@ public class search extends AppCompatActivity {
                     StringBuffer selectedNamesDisplay = new StringBuffer();
                     for (int i = 0; i < allCountriesArray.length(); i++) {
                         try {
-                            String wId = allCountriesArray.getJSONObject(i).getString("warehouseLocation");
+                            String wId = allCountriesArray.getJSONObject(i).getString("warehouseName");
                             queryLocations.add(wId);
                             selectedTexts.append(wId);
                             selectedTexts.append("\n");
@@ -334,7 +336,7 @@ public class search extends AppCompatActivity {
 
         String queryLocationsString = "";
         for (int i = 0; i < queryLocations.size(); i++) {
-            queryLocationsString += warehouseLocation2IdMapper.get(queryLocations.get(i));
+            queryLocationsString += (warehouseLocation2IdMapper.get(queryLocations.get(i)) + " ");
         }
 
         String queryIdsString = "";
@@ -344,6 +346,10 @@ public class search extends AppCompatActivity {
 
         viewInventoryPage.putExtra("locations", queryLocationsString);
         viewInventoryPage.putExtra("id", queryIdsString);
+
+        Log.e("locations", queryLocationsString);
+        Log.e("id", queryIdsString);
+
         startActivity(viewInventoryPage);
         finish();
     }
