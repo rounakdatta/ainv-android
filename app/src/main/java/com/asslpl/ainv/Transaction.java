@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -198,10 +200,11 @@ public class Transaction extends AppCompatActivity {
         // picking values from the first page
         mViewPager.setCurrentItem(0);
         TextView fe1p1 = mViewPager.getRootView().findViewById(R.id.billOfEntry);
-        TextView fe2p1 = mViewPager.getRootView().findViewById(R.id.date);
+        TextView fe2p1 = mViewPager.getRootView().findViewById(R.id.entryDateHeader);
         TextView fe3p1 = mViewPager.getRootView().findViewById(R.id.itemId);
         TextView fe4p1 = mViewPager.getRootView().findViewById(R.id.warehouseId);
         TextView fe5p1 = mViewPager.getRootView().findViewById(R.id.comeOrGo);
+        TextView fe6p1 = mViewPager.getRootView().findViewById(R.id.clientId);
 
         // picking values from the second page
         mViewPager.setCurrentItem(1);
@@ -219,11 +222,10 @@ public class Transaction extends AppCompatActivity {
         TextView fe2p3 = mViewPager.getRootView().findViewById(R.id.dutyValue);
         TextView fe3p3 = mViewPager.getRootView().findViewById(R.id.gstValue);
         TextView fe4p3 = mViewPager.getRootView().findViewById(R.id.totalValue);
-        TextView fe5p3 = mViewPager.getRootView().findViewById(R.id.totalValue);
-        TextView fe6p3 = mViewPager.getRootView().findViewById(R.id.valuePerPiece);
-        TextView fe7p3 = mViewPager.getRootView().findViewById(R.id.totalPieces);
-        TextView fe8p3 = mViewPager.getRootView().findViewById(R.id.isPaid);
-        TextView fe9p3 = mViewPager.getRootView().findViewById(R.id.date);
+        TextView fe5p3 = mViewPager.getRootView().findViewById(R.id.valuePerPiece);
+        TextView fe6p3 = mViewPager.getRootView().findViewById(R.id.totalPieces);
+        CheckBox fe7p3 = mViewPager.getRootView().findViewById(R.id.isPaid);
+        TextView fe8p3 = mViewPager.getRootView().findViewById(R.id.expectedDateHeader);
 
         // posting the data to the server
         System.out.println(fe1p1.getText());
@@ -231,6 +233,35 @@ public class Transaction extends AppCompatActivity {
         System.out.println(fe1p2.getText());
         System.out.println("------");
         System.out.println(fe1p3.getText());
+
+        // sending data
+        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+        String transactionURL = testEndpoint + "/api/put/transaction/";
+
+        String plusOrMinus = fe5p1.getText().toString();
+        String searchResponse = "NULL";
+
+        if (plusOrMinus.equals("-")) {
+            plusOrMinus = "out";
+        } else {
+            plusOrMinus = "in";
+        }
+
+        String data = "trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&date=" + fe8p3.getText();
+        Log.e("postingData", data);
+
+        HttpPostRequest insertHttp = new HttpPostRequest();
+        try {
+            searchResponse = insertHttp.execute(transactionURL, data).get();
+
+            Toast toast = Toast.makeText(getApplicationContext(), "Transaction successful!", Toast.LENGTH_LONG);
+            toast.show();
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static int getWidth(Context context) {
@@ -293,12 +324,14 @@ public class Transaction extends AppCompatActivity {
 
         TextView comeOrGoThirdPage = mViewPager.getRootView().findViewById(R.id.comeOrGoThird);
         TextView paidTv = mViewPager.getRootView().findViewById(R.id.isPaid);
-        TextView paymentDate = mViewPager.getRootView().findViewById(R.id.date);
+        TextView paymentDate = mViewPager.getRootView().findViewById(R.id.expectedDate);
+        TextView paymentDateHeader = mViewPager.getRootView().findViewById(R.id.expectedDateHeader);
         EditText assdValue = mViewPager.getRootView().findViewById(R.id.assdValue);
 
         if (comeOrGoThirdPage.getText() == "+") {
             paidTv.setVisibility(View.INVISIBLE);
             paymentDate.setVisibility(View.INVISIBLE);
+            paymentDateHeader.setVisibility(View.INVISIBLE);
 
             TextView assessedValueHeader = mViewPager.getRootView().findViewById(R.id.assdValueHeader);
             assessedValueHeader.setVisibility(View.VISIBLE);
@@ -310,9 +343,11 @@ public class Transaction extends AppCompatActivity {
         } else {
             paidTv.setVisibility(View.VISIBLE);
             paymentDate.setVisibility(View.VISIBLE);
+            paymentDateHeader.setVisibility(View.VISIBLE);
 
             TextView assessedValueHeader = mViewPager.getRootView().findViewById(R.id.assdValueHeader);
             assessedValueHeader.setVisibility(View.INVISIBLE);
+            assdValue.setText("0");
             assdValue.setVisibility(View.INVISIBLE);
 
             TextView dutyValueHeader = mViewPager.getRootView().findViewById(R.id.dutyValueHeader);
@@ -328,21 +363,26 @@ public class Transaction extends AppCompatActivity {
         Spinner itemSelector;
         Spinner itemVariantSelector;
         Spinner warehouseSelector;
+        Spinner clientSelector;
 
         TextView itemIdTv;
         TextView warehouseIdTv;
+        TextView clientIdTv;
 
         ArrayList<String> itemNames = null;
         ArrayList<String> itemVariants = null;
         ArrayList<String> warehouses = null;
+        ArrayList<String> clients = null;
 
         JSONArray allItemsArray = null;
         JSONArray itemVariantsArray = null;
         JSONArray warehouseArray = null;
+        JSONArray clientArray = null;
 
         int itemParentPosition = 0;
         String ITEMID = "-1";
         String WAREHOUSEID = "-1";
+        String CLIENTID = "-1";
 
         View rootView;
 
@@ -434,14 +474,16 @@ public class Transaction extends AppCompatActivity {
                 });
 
                 // set the calendar dialog
-                Button dobSelector = rootView.findViewById(R.id.date);
+                Button dobSelector = rootView.findViewById(R.id.entryDate);
                 dobSelector.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        DialogFragment newFragment = new SelectDateFragment();
-                        newFragment.show(getFragmentManager(), "Date Picker");
-                    }
-                });
+                        @Override
+                        public void onClick(View v) {
+                            DialogFragment newFragment = new SelectDateFragment();
+                            newFragment.show(getFragmentManager(), "Date Picker");
+                        }
+                    });
+
+
 
                 // set the item and warehouse data
 
@@ -568,6 +610,7 @@ public class Transaction extends AppCompatActivity {
                 });
 
                 warehouseSelector = rootView.findViewById(R.id.warehouse);
+                clientIdTv = rootView.findViewById(R.id.clientId);
 
                 // logic for populating the warehouse spinner
                 String warehouseDataURL = testEndpoint + "/api/get/all/warehouses/";
@@ -622,6 +665,63 @@ public class Transaction extends AppCompatActivity {
                     }
                 });
 
+                // ------- //
+                // logic for populating the client spinner
+                clientSelector = rootView.findViewById(R.id.client);
+
+                // logic for populating the warehouse spinner
+                String clientDataURL = testEndpoint + "/api/get/all/clients/";
+                HttpGetRequest clientGetter = new HttpGetRequest();
+                try {
+                    String allClients= clientGetter.execute(clientDataURL).get();
+                    clientArray = new JSONArray(allClients);
+
+                    clients = new ArrayList<>();
+                    for (int i = 0; i < clientArray.length(); i++) {
+                        clients.add(clientArray.getJSONObject(i).getString("clientName"));
+                    }
+
+                    ArrayAdapter<String> clientDisplayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, clients);
+                    clientDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                    clientSelector.setAdapter(clientDisplayAdapter);
+
+                    // by default, the first warehouse will be selected
+                    CLIENTID = clientArray.getJSONObject(0).getString("clientId");
+                    clientIdTv.setText(CLIENTID);
+
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                // logic to define what happens when a new client is selected
+                clientSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                        try {
+                            CLIENTID = clientArray.getJSONObject(position).getString("clientId");
+                            clientIdTv.setText(CLIENTID);
+
+                            // get the inventory details for this configuration
+                            // getItemInventory(getView(), WAREHOUSEID, ITEMID);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
 
 
             } else if (pageNumber == 2) {
@@ -660,7 +760,7 @@ public class Transaction extends AppCompatActivity {
                         try {
                             if (comeOrGoSecondPage.getText() == "+") {
 
-                                changeValue.setText("+ " + s.toString());
+                                changeValue.setText("+" + s.toString());
                                 calculatedValue = Integer.parseInt(String.valueOf(currentValue.getText())) + Integer.parseInt(s.toString());
 
                                 int cartonCount = Integer.parseInt(s.toString());
@@ -674,7 +774,7 @@ public class Transaction extends AppCompatActivity {
 
                             } else {
 
-                                changeValue.setText("- " + s.toString());
+                                changeValue.setText("-" + s.toString());
                                 calculatedValue = Integer.parseInt(String.valueOf(currentValue.getText())) - Integer.parseInt(s.toString());
 
                                 int cartonCount = Integer.parseInt(s.toString());
@@ -689,7 +789,7 @@ public class Transaction extends AppCompatActivity {
                             }
                         } catch(Exception e) {
                             s = "0";
-                            changeValue.setText("+ " + s.toString());
+                            changeValue.setText("+" + s.toString());
                             calculatedValue = Integer.parseInt(String.valueOf(currentValue.getText()));
 
                             int cartonCount = Integer.parseInt(s.toString());
@@ -728,7 +828,7 @@ public class Transaction extends AppCompatActivity {
                 totalPcsP3 = rootView.findViewById(R.id.totalPieces);
 
                 // payment date handler
-                Button payDobSelector = rootView.findViewById(R.id.date);
+                Button payDobSelector = rootView.findViewById(R.id.expectedDate);
                 payDobSelector.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

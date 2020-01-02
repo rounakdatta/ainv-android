@@ -40,7 +40,7 @@
         android:layout_width="246dp"
         android:layout_height="123dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="125dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="100dp"
         android:onClick="gotoItemSearchPage"
@@ -99,7 +99,7 @@
         android:layout_width="246dp"
         android:layout_height="123dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="350dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="50dp"
         android:onClick="gotoTransactionPage"
@@ -121,6 +121,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Transaction"
+            android:textAlignment="center" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/salesSearch"
+        android:layout_width="246dp"
+        android:layout_height="123dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="650dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="100dp"
+        android:onClick="gotoSalesSearchPage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/salesSearchImage"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom"
+            android:contentDescription="Sales Search"
+            android:src="@drawable/asslpl_search"></ImageView>
+
+        <TextView
+            android:id="@+id/salesSearchLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sales Search"
             android:textAlignment="center" />
     </android.support.v7.widget.CardView>
 

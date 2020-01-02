@@ -15,10 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity android:name=".view_sales"></activity>
+        <activity android:name=".searchSales" />
         <activity
             android:name=".Transaction"
             android:label="@string/title_activity_transaction"
-            android:theme="@style/AppTheme.NoActionBar.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar" />
         <activity android:name=".ItemMasterEntry" />
         <activity android:name=".WarehouseEntry" />
         <activity android:name=".ActivityChooser" />

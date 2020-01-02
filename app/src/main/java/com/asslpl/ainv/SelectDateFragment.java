@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
-public class SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class  SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -21,11 +22,19 @@ public class SelectDateFragment extends DialogFragment implements DatePickerDial
     }
 
     public void onDateSet(DatePicker view, int yy, int mm, int dd) {
-        populateSetDate(yy, mm+1, dd);
+        populateSetDate(view, yy, mm+1, dd);
     }
-    public void populateSetDate(int year, int month, int day) {
-        Button dob= (Button) getActivity(). findViewById(R.id.date);
-        dob.setText(day + "/" + month + "/" + year);
-    }
+    public void populateSetDate(DatePicker view, int year, int month, int day) {
+        TextView dob;
 
+        try {
+            dob = getActivity().findViewById(R.id.entryDateHeader);
+            dob.setText(day + "/" + month + "/" + year);
+            return;
+        } catch (Exception e) {
+            System.out.println(e);
+            dob = getActivity().findViewById(R.id.expectedDateHeader);
+            dob.setText(day + "/" + month + "/" + year);
+        }
+    }
 }

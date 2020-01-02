@@ -32,4 +32,9 @@ public class ActivityChooser extends AppCompatActivity {
         Intent transactionPage = new Intent(getApplicationContext(), Transaction.class);
         startActivity(transactionPage);
     }
+
+    public void gotoSalesSearchPage(View view) {
+        Intent salesSearchPage = new Intent(getApplicationContext(), searchSales.class);
+        startActivity(salesSearchPage );
+    }
 }
