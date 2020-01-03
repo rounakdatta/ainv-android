@@ -152,6 +152,12 @@ public class searchSales extends AppCompatActivity {
 
     public void startSearch(View view) {
         Intent viewSalesPage = new Intent(getApplicationContext(), view_sales.class);
+
+        TextView selectedSalesTv = findViewById(R.id.selectedSales);
+        TextView selectedClientTv = findViewById(R.id.selectedClient);
+
+        viewSalesPage.putExtra("invoiceNumber", selectedSalesTv.getText());
+        viewSalesPage.putExtra("clientId", selectedClientTv.getText());
         startActivity(viewSalesPage);
         finish();
     }
