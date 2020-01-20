@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -226,6 +227,7 @@ public class Transaction extends AppCompatActivity {
         TextView fe6p3 = mViewPager.getRootView().findViewById(R.id.totalPieces);
         CheckBox fe7p3 = mViewPager.getRootView().findViewById(R.id.isPaid);
         TextView fe8p3 = mViewPager.getRootView().findViewById(R.id.expectedDateHeader);
+        EditText fe9p3 = mViewPager.getRootView().findViewById(R.id.paidAmount);
 
         // posting the data to the server
         System.out.println(fe1p1.getText());
@@ -239,7 +241,7 @@ public class Transaction extends AppCompatActivity {
         String transactionURL = testEndpoint + "/api/put/transaction/";
 
         String plusOrMinus = fe5p1.getText().toString();
-        String searchResponse = "NULL";
+        String transactionResponse= "NULL";
 
         if (plusOrMinus.equals("-")) {
             plusOrMinus = "out";
@@ -247,19 +249,32 @@ public class Transaction extends AppCompatActivity {
             plusOrMinus = "in";
         }
 
-        String data = "trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&date=" + fe8p3.getText();
+        String data = "trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
         Log.e("postingData", data);
 
         HttpPostRequest insertHttp = new HttpPostRequest();
         try {
-            searchResponse = insertHttp.execute(transactionURL, data).get();
+            transactionResponse = insertHttp.execute(transactionURL, data).get();
+            JSONObject transactionResponseJson = new JSONObject(transactionResponse);
 
-            Toast toast = Toast.makeText(getApplicationContext(), "Transaction successful!", Toast.LENGTH_LONG);
+            Toast toast;
+
+            if (transactionResponseJson.getBoolean("success")) {
+                toast = Toast.makeText(getApplicationContext(), "Transaction successful!", Toast.LENGTH_LONG);
+
+                // finish this activity upon successful completion
+                finish();
+            } else {
+                toast = Toast.makeText(getApplicationContext(), "Transaction error!", Toast.LENGTH_LONG);
+            }
+
             toast.show();
 
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -323,10 +338,13 @@ public class Transaction extends AppCompatActivity {
         totalPieces.setText(totalPcsCount);
 
         TextView comeOrGoThirdPage = mViewPager.getRootView().findViewById(R.id.comeOrGoThird);
-        TextView paidTv = mViewPager.getRootView().findViewById(R.id.isPaid);
+        CheckBox paidTv = mViewPager.getRootView().findViewById(R.id.isPaid);
         TextView paymentDate = mViewPager.getRootView().findViewById(R.id.expectedDate);
         TextView paymentDateHeader = mViewPager.getRootView().findViewById(R.id.expectedDateHeader);
         EditText assdValue = mViewPager.getRootView().findViewById(R.id.assdValue);
+
+        final EditText totalValue = mViewPager.getRootView().findViewById(R.id.totalValue);
+        final EditText paidAmount = mViewPager.getRootView().findViewById(R.id.paidAmount);
 
         if (comeOrGoThirdPage.getText() == "+") {
             paidTv.setVisibility(View.INVISIBLE);
@@ -353,6 +371,19 @@ public class Transaction extends AppCompatActivity {
             TextView dutyValueHeader = mViewPager.getRootView().findViewById(R.id.dutyValueHeader);
             dutyValueHeader.setText("Material Value");
         }
+
+        paidTv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    paidAmount.setText(totalValue.getText());
+                    paidAmount.setEnabled(false);
+                } else {
+                    paidAmount.setText("");
+                    paidAmount.setEnabled(true);
+                }
+            }
+        });
     }
 
     /**

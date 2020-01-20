@@ -1,8 +1,15 @@
 package com.asslpl.ainv;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.rey.material.widget.TextView;
 
@@ -50,7 +57,10 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
                 renderedView = renderIsPaid(inv);
                 break;
             case 9:
-                renderedView = renderExpectedPaymentDate(inv);
+                renderedView = renderPaidAmount(inv);
+                break;
+            case 10:
+                renderedView = renderExpectedPaymentDate(inv, rowIndex);
                 break;
         }
 
@@ -93,8 +103,90 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         return renderString(inv.isPaid);
     }
 
-    private View renderExpectedPaymentDate(final Invoice inv) {
-        return renderString(inv.paymentDate);
+    private View renderPaidAmount(final Invoice inv) {
+        return renderUpdatablePayment(inv.paidAmount);
+    }
+
+    private View renderExpectedPaymentDate(final Invoice inv, final int rowIndex) {
+        return renderUpdatableDate(inv.paymentDate, rowIndex);
+    }
+
+    private View renderUpdatablePayment(final String value) {
+        final TextView textView = new TextView(getContext());
+        textView.setText(value);
+        textView.setPadding(20, 10, 20, 10);
+        textView.setTextSize(20);
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.pay_amount);
+                dialog.show();
+
+                dialog.setCancelable(true);
+
+
+                final EditText paymentAmount = dialog.findViewById(R.id.paymentAmount);
+
+                Button updateButton = dialog.findViewById(R.id.updateButton);
+                updateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialog.dismiss();
+                        textView.setText(paymentAmount.getText());
+
+                    }
+                });
+            }
+        });
+
+        return textView;
+    }
+
+    private View renderUpdatableDate(final String value, final int rowIndex) {
+        final TextView textView = new TextView(getContext());
+        textView.setText(value);
+        textView.setId(rowIndex);
+        textView.setPadding(20, 10, 20, 10);
+        textView.setTextSize(20);
+
+
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.set_date);
+                dialog.show();
+
+                dialog.setCancelable(true);
+
+                final Context context = getContext();
+
+                final Button updatedDate = dialog.findViewById(R.id.updatedDate);
+
+                updatedDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+
+                        DialogFragment newFragment = new SelectDateFragment();
+                        ((SelectDateFragment) newFragment).setValue(rowIndex);
+                        newFragment.show(this.getFragmentManager(), "Date Picker");
+                    }
+
+                    private FragmentManager getFragmentManager() {
+                        FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
+                        return fragmentManager;
+                    }
+                });
+
+            }
+        });
+
+        return textView;
     }
 
     private View renderString(final String value) {
@@ -102,6 +194,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         textView.setText(value);
         textView.setPadding(20, 10, 20, 10);
         textView.setTextSize(20);
+
         return textView;
     }
 

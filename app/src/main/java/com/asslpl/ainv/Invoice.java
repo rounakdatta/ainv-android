@@ -21,9 +21,10 @@ public class Invoice {
     public String totalValue;
     public String valuePerPiece;
     public String isPaid;
+    public String paidAmount;
     public String paymentDate;
 
-        public Invoice(final String transactionId, final String trackingNumber, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseId, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paymentDate) {
+        public Invoice(final String transactionId, final String trackingNumber, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseId, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate) {
             this.transactionId = transactionId;
             this.trackingNumber = trackingNumber;
             this.entryDate = entryDate;
@@ -43,6 +44,7 @@ public class Invoice {
             this.totalValue = totalValue;
             this.valuePerPiece = valuePerPiece;
             this.isPaid = isPaid;
+            this.paidAmount = paidAmount;
             this.paymentDate = paymentDate;
     }
 

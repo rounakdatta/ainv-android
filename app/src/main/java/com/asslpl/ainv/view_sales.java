@@ -22,7 +22,7 @@ public class view_sales extends AppCompatActivity {
     private List<Invoice> dataToShow = new ArrayList<>();
     private List<Invoice> headerData = new ArrayList<>();
 
-    private static final String[] TABLE_HEADERS = { "Sales Invoice Number", "Entry Date", "Item", "Warehouse", "Client Name", "Change in Stock", "Total Pieces", "Total Payment", "Is Paid?", "Expected Payment Date" };
+    private static final String[] TABLE_HEADERS = { "Sales Invoice Number", "Entry Date", "Item", "Warehouse", "Client Name", "Change in Stock", "Total Pieces", "Total Payment", "Is Paid?", "Paid Amount", "Expected Payment Date" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class view_sales extends AppCompatActivity {
             salesCollection = new ArrayList<>();
             for (int i = 0; i < searchResponseArray.length(); i++) {
                 JSONObject salesTicket = searchResponseArray.getJSONObject(i);
-                Invoice foo = new Invoice(salesTicket.getString("transactionId"), salesTicket.getString("trackingNumber"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseId"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paymentDate"));
+                Invoice foo = new Invoice(salesTicket.getString("transactionId"), salesTicket.getString("trackingNumber"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseId"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), salesTicket.getString("paymentDate"));
                 dataToShow.add(foo);
             }
 
