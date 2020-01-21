@@ -10,10 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.rey.material.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import de.codecrafters.tableview.TableDataAdapter;
 
@@ -104,16 +109,17 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
     }
 
     private View renderPaidAmount(final Invoice inv) {
-        return renderUpdatablePayment(inv.paidAmount);
+        return renderUpdatablePayment(inv.paidAmount, Integer.parseInt(inv.transactionId));
     }
 
     private View renderExpectedPaymentDate(final Invoice inv, final int rowIndex) {
-        return renderUpdatableDate(inv.paymentDate, rowIndex);
+        return renderUpdatableDate(inv.paymentDate, Integer.parseInt(inv.transactionId));
     }
 
-    private View renderUpdatablePayment(final String value) {
+    private View renderUpdatablePayment(final String value, final int rowIndex) {
         final TextView textView = new TextView(getContext());
         textView.setText(value);
+        textView.setId(rowIndex);
         textView.setPadding(20, 10, 20, 10);
         textView.setTextSize(20);
 
@@ -137,6 +143,36 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
                         dialog.dismiss();
                         textView.setText(paymentAmount.getText());
 
+                        // send the data to server
+                        String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                        String updateURL = testEndpoint + "/api/update/paidamount/";
+                        String updateResponse = "NULL";
+
+                        String data = "transactionId=" + rowIndex + "&paidAmount=" + paymentAmount.getText();
+                        HttpPostRequest insertHttp = new HttpPostRequest();
+                        try {
+                            updateResponse = insertHttp.execute(updateURL, data).get();
+                            JSONObject transactionResponseJson = new JSONObject(updateResponse);
+
+                            Toast toast;
+
+                            if (transactionResponseJson.getBoolean("success")) {
+                                toast = Toast.makeText(getContext(), "Transaction successful!", Toast.LENGTH_LONG);
+
+                            } else {
+                                toast = Toast.makeText(getContext(), "Transaction error!", Toast.LENGTH_LONG);
+                            }
+
+                            toast.show();
+
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 });
             }
@@ -148,7 +184,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
     private View renderUpdatableDate(final String value, final int rowIndex) {
         final TextView textView = new TextView(getContext());
         textView.setText(value);
-        textView.setId(rowIndex);
+        textView.setId(rowIndex + 999);
         textView.setPadding(20, 10, 20, 10);
         textView.setTextSize(20);
 

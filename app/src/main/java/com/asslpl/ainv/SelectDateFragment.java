@@ -7,8 +7,13 @@ import android.support.v4.app.DialogFragment;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 public class  SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
@@ -46,8 +51,39 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
 
             } catch (Exception e1) {
                 System.out.println(e1);
-                TextView dt = getActivity().findViewById(this.whichRowItis);
-                dt.setText(day + "/" + month + "/" + year);
+                TextView dt = getActivity().findViewById(this.whichRowItis + 999);
+                String settingDate = day + "/" + month + "/" + year;
+                dt.setText(settingDate);
+
+                // send the data to server
+                String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                String updateURL = testEndpoint + "/api/update/paymentdate/";
+                String updateResponse = "NULL";
+
+                String data = "transactionId=" + this.whichRowItis + "&paymentDate=" + settingDate;
+                HttpPostRequest insertHttp = new HttpPostRequest();
+                try {
+                    updateResponse = insertHttp.execute(updateURL, data).get();
+                    JSONObject transactionResponseJson = new JSONObject(updateResponse);
+
+                    Toast toast;
+
+                    if (transactionResponseJson.getBoolean("success")) {
+                        toast = Toast.makeText(getContext(), "Transaction successful!", Toast.LENGTH_LONG);
+
+                    } else {
+                        toast = Toast.makeText(getContext(), "Transaction error!", Toast.LENGTH_LONG);
+                    }
+
+                    toast.show();
+
+                } catch (ExecutionException ex) {
+                    e.printStackTrace();
+                } catch (InterruptedException ex) {
+                    e.printStackTrace();
+                } catch (JSONException ex) {
+                    e.printStackTrace();
+                }
             }
         }
     }

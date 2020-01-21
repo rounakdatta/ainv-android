@@ -112,11 +112,11 @@ public class Transaction extends AppCompatActivity {
     }
 
 
-    public List<String> getItemInventory(View view, String warehouseId, String itemId) {
+    public List<String> getItemInventory(View view, String warehouseId, String itemId, String clientId) {
 
         String testEndpoint = getResources().getString(R.string.serverEndpoint);
         String rateURL = testEndpoint + "/api/get/rate/";
-        String searchRequests = "itemId=" + itemId + "&warehouseId=" + warehouseId;
+        String searchRequests = "itemId=" + itemId + "&warehouseId=" + warehouseId + "&clientId=" + clientId;
 
         String searchResponse = null;
         JSONObject searchResponseDict = null;
@@ -161,13 +161,15 @@ public class Transaction extends AppCompatActivity {
         TextView itemIdTv = mViewPager.getRootView().findViewById(R.id.itemId);
         TextView warehouseIdTv = mViewPager.getRootView().findViewById(R.id.warehouseId);
         TextView comeOrGoTv = mViewPager.getRootView().findViewById(R.id.comeOrGo);
+        EditText clientTv = mViewPager.getRootView().findViewById(R.id.clientId);
 
 
         try {
             String itemId = String.valueOf(itemIdTv.getText());
             String warehouseId = String.valueOf(warehouseIdTv.getText());
+            String clientId = String.valueOf(clientTv.getText());
 
-            List<String> response = getItemInventory(view, warehouseId, itemId);
+            List<String> response = getItemInventory(view, warehouseId, itemId, clientId);
 
             mViewPager.setCurrentItem(2);
             TextView comeOrGoThirdPageTv = mViewPager.getRootView().findViewById(R.id.comeOrGoThird);
@@ -350,6 +352,8 @@ public class Transaction extends AppCompatActivity {
             paidTv.setVisibility(View.INVISIBLE);
             paymentDate.setVisibility(View.INVISIBLE);
             paymentDateHeader.setVisibility(View.INVISIBLE);
+            paidAmount.setVisibility(View.INVISIBLE);
+            paidAmount.setText("0");
 
             TextView assessedValueHeader = mViewPager.getRootView().findViewById(R.id.assdValueHeader);
             assessedValueHeader.setVisibility(View.VISIBLE);
@@ -362,6 +366,7 @@ public class Transaction extends AppCompatActivity {
             paidTv.setVisibility(View.VISIBLE);
             paymentDate.setVisibility(View.VISIBLE);
             paymentDateHeader.setVisibility(View.VISIBLE);
+            paidAmount.setVisibility(View.VISIBLE);
 
             TextView assessedValueHeader = mViewPager.getRootView().findViewById(R.id.assdValueHeader);
             assessedValueHeader.setVisibility(View.INVISIBLE);

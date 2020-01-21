@@ -22,7 +22,7 @@ public class view_inventory extends AppCompatActivity {
     private List<Inventory> dataToShow = new ArrayList<>();
     private List<Inventory> headerData = new ArrayList<>();
 
-    private static final String[] TABLE_HEADERS = { "Item Description", "Item Variant Description", "HSN Code", "Big Carton Quantity", "UoM", "Small Box Quantity", "UoM", "Item Variant Quantity", "UoM", "Warehouse Name", "Warehouse Location" };
+    private static final String[] TABLE_HEADERS = { "Item Description", "Item Variant Description", "HSN Code", "Big Carton Quantity", "UoM", "Small Box Quantity", "UoM", "Item Variant Quantity", "UoM", "Warehouse Name", "Client Name"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class view_inventory extends AppCompatActivity {
             inventoryCollection = new ArrayList<>();
             for (int i = 0; i < searchResponseArray.length(); i++) {
                 JSONObject newInv = searchResponseArray.getJSONObject(i);
-                Inventory foo = new Inventory(newInv.getString("itemName"), newInv.getString("itemVariant"), newInv.getString("hsnCode"), newInv.getString("bigcartonQuantity"), newInv.getString("uomBig"), newInv.getString("smallboxQuantity"), newInv.getString("uomSmall"), newInv.getString("itemQuantity"), newInv.getString("uomRaw"), newInv.getString("warehouseName"), newInv.getString("warehouseLocation"));
+                Inventory foo = new Inventory(newInv.getString("itemName"), newInv.getString("itemVariant"), newInv.getString("hsnCode"), newInv.getString("bigcartonQuantity"), newInv.getString("uomBig"), newInv.getString("smallboxQuantity"), newInv.getString("uomSmall"), newInv.getString("itemQuantity"), newInv.getString("uomRaw"), newInv.getString("warehouseName"), newInv.getString("warehouseLocation"), newInv.getString("clientName"));
                 dataToShow.add(foo);
             }
 

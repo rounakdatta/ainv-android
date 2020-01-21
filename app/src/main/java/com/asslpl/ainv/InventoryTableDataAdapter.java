@@ -21,6 +21,8 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
         Inventory inv = getRowData(rowIndex);
         View renderedView = null;
 
+        System.out.println(columnIndex);
+
         switch (columnIndex) {
             case 0:
                 renderedView = renderItemName(inv);
@@ -53,7 +55,7 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
                 renderedView = renderWarehouseName(inv);
                 break;
             case 10:
-                renderedView = renderWarehouseLocation(inv);
+                renderedView = renderClientName(inv);
                 break;
         }
 
@@ -97,11 +99,15 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
     }
 
     private View renderWarehouseName(final Inventory inv) {
-        return renderString(inv.warehouseName);
+        return renderString(inv.warehouseName + ", " + inv.warehouseLocation);
     }
 
     private View renderWarehouseLocation(final Inventory inv) {
         return renderString(inv.warehouseLocation);
+    }
+
+    private View renderClientName(final Inventory inv) {
+        return renderString(inv.clientName);
     }
 
     private View renderString(final String value) {
