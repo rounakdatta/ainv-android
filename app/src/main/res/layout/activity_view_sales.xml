@@ -24,7 +24,7 @@
             android:layout_marginTop="8dp"
             android:nestedScrollingEnabled="true"
             table:layout_constraintTop_toTopOf="parent"
-            table:tableView_columnCount="11" />
+            table:tableView_columnCount="13" />
 
     </android.widget.HorizontalScrollView>
 

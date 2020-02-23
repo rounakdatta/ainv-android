@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 public class  SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -29,7 +30,9 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
         int yy = calendar.get(Calendar.YEAR);
         int mm = calendar.get(Calendar.MONTH);
         int dd = calendar.get(Calendar.DAY_OF_MONTH);
-        return new DatePickerDialog(getActivity(), this, yy, mm, dd);
+        DatePickerDialog dp = new DatePickerDialog(getActivity(), this, yy, mm, dd);
+        dp.getDatePicker().setMinDate(System.currentTimeMillis());
+        return dp;
     }
 
     public void onDateSet(DatePicker view, int yy, int mm, int dd) {
@@ -53,6 +56,19 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
                 System.out.println(e1);
                 TextView dt = getActivity().findViewById(this.whichRowItis + 999);
                 String settingDate = day + "/" + month + "/" + year;
+
+//                Calendar received = Calendar.getInstance();
+//                received.set(year, month, day);
+//                Calendar today = Calendar.getInstance();
+//                today.set(Calendar.YEAR, Calendar.MONTH, Calendar.DATE);
+//                System.out.println(received.toString());
+//                System.out.println(today.toString());
+//                if (received.before(today)) {
+//                    Toast toast = Toast.makeText(getContext(), "Date must not be before today!", Toast.LENGTH_LONG);
+//                    toast.show();
+//                    return;
+//                }
+
                 dt.setText(settingDate);
 
                 // send the data to server

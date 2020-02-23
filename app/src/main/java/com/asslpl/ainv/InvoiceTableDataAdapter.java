@@ -6,6 +6,8 @@ import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,6 +23,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.codecrafters.tableview.TableDataAdapter;
+
+import static java.lang.Float.parseFloat;
 
 public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
 
@@ -65,6 +69,12 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
                 renderedView = renderPaidAmount(inv);
                 break;
             case 10:
+                renderedView = renderBalance(inv);
+                break;
+            case 11:
+                renderedView = renderCumulativeBalance(inv);
+                break;
+            case 12:
                 renderedView = renderExpectedPaymentDate(inv, rowIndex);
                 break;
         }
@@ -101,22 +111,29 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
     }
 
     private View renderTotalPayment(final Invoice inv) {
-        return renderString(inv.totalValue);
+        return renderPaymentAmountColumn(inv.totalValue, Integer.parseInt(inv.transactionId));
+    }
+
+    private View renderBalance(final Invoice inv) {
+        return renderString(inv.balance);
+    }
+    private View renderCumulativeBalance(final Invoice inv) {
+        return renderString(inv.cumulativeBalance);
+    }
+
+    private View renderPaidAmount(final Invoice inv) {
+        return renderUpdatablePayment(inv.paidAmount, Integer.parseInt(inv.transactionId), inv.totalValue);
     }
 
     private View renderIsPaid(final Invoice inv) {
         return renderString(inv.isPaid);
     }
 
-    private View renderPaidAmount(final Invoice inv) {
-        return renderUpdatablePayment(inv.paidAmount, Integer.parseInt(inv.transactionId));
-    }
-
     private View renderExpectedPaymentDate(final Invoice inv, final int rowIndex) {
         return renderUpdatableDate(inv.paymentDate, Integer.parseInt(inv.transactionId));
     }
 
-    private View renderUpdatablePayment(final String value, final int rowIndex) {
+    private View renderUpdatablePayment(final String value, final int rowIndex, final String totalPayVal) {
         final TextView textView = new TextView(getContext());
         textView.setText(value);
         textView.setId(rowIndex);
@@ -133,7 +150,40 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
                 dialog.setCancelable(true);
 
 
+                final EditText alreadyPaidTv = dialog.findViewById(R.id.alreadyPaidAmount);
+                final EditText toPayAmountTv = dialog.findViewById(R.id.toPayAmount);
                 final EditText paymentAmount = dialog.findViewById(R.id.paymentAmount);
+                final EditText grandSumTv = dialog.findViewById(R.id.grandSum);
+
+                alreadyPaidTv.setText(textView.getText());
+                grandSumTv.setText(totalPayVal);
+
+                toPayAmountTv.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        if (charSequence.toString().isEmpty()) {
+                            paymentAmount.setText("0.00");
+                            return;
+                        }
+
+                        String alreadyPaidAmount = alreadyPaidTv.getText().toString();
+                        String toPayAmount = toPayAmountTv.getText().toString();
+
+                        String totalAmount = String.valueOf(parseFloat(alreadyPaidAmount) + parseFloat(toPayAmount));
+
+                        paymentAmount.setText(totalAmount);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
 
                 Button updateButton = dialog.findViewById(R.id.updateButton);
                 updateButton.setOnClickListener(new View.OnClickListener() {
@@ -228,6 +278,16 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
     private View renderString(final String value) {
         final TextView textView = new TextView(getContext());
         textView.setText(value);
+        textView.setPadding(20, 10, 20, 10);
+        textView.setTextSize(20);
+
+        return textView;
+    }
+
+    private View renderPaymentAmountColumn(final String value, final int rowIndex) {
+        final TextView textView = new TextView(getContext());
+        textView.setText(value);
+        textView.setId(rowIndex + 443);
         textView.setPadding(20, 10, 20, 10);
         textView.setTextSize(20);
 
