@@ -13,6 +13,8 @@ public class Invoice {
     public String warehouseLocation;
     public String clientId;
     public String clientName;
+    public String customerId;
+    public String customerName;
     public String changeStock;
     public String finalStock;
     public String totalPcs;
@@ -26,7 +28,7 @@ public class Invoice {
     public String balance;
     public String cumulativeBalance;
 
-        public Invoice(final String transactionId, final String trackingNumber, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseId, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance) {
+        public Invoice(final String transactionId, final String trackingNumber, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseId, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String customerId, final String customerName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance) {
             this.transactionId = transactionId;
             this.trackingNumber = trackingNumber;
             this.entryDate = entryDate;
@@ -38,6 +40,8 @@ public class Invoice {
             this.warehouseLocation = warehouseLocation;
             this.clientId = clientId;
             this.clientName = clientName;
+            this.customerId = customerId;
+            this.customerName = customerName;
             this.changeStock = changeStock;
             this.finalStock = finalStock;
             this.totalPcs = totalPcs;

@@ -230,6 +230,7 @@ public class Transaction extends AppCompatActivity {
         CheckBox fe7p3 = mViewPager.getRootView().findViewById(R.id.isPaid);
         TextView fe8p3 = mViewPager.getRootView().findViewById(R.id.expectedDateHeader);
         EditText fe9p3 = mViewPager.getRootView().findViewById(R.id.paidAmount);
+        TextView fe10p3 = mViewPager.getRootView().findViewById(R.id.custid);
 
         // posting the data to the server
         System.out.println(fe1p1.getText());
@@ -251,7 +252,7 @@ public class Transaction extends AppCompatActivity {
             plusOrMinus = "in";
         }
 
-        String data = "trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
+        String data = "trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&customerId=" + fe10p3.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
         Log.e("postingData", data);
 
         HttpPostRequest insertHttp = new HttpPostRequest();
@@ -400,25 +401,30 @@ public class Transaction extends AppCompatActivity {
         Spinner itemVariantSelector;
         Spinner warehouseSelector;
         Spinner clientSelector;
+        Spinner customerSelector;
 
         TextView itemIdTv;
         TextView warehouseIdTv;
         TextView clientIdTv;
+        TextView customerTv;
 
         ArrayList<String> itemNames = null;
         ArrayList<String> itemVariants = null;
         ArrayList<String> warehouses = null;
         ArrayList<String> clients = null;
+        ArrayList<String> customers = null;
 
         JSONArray allItemsArray = null;
         JSONArray itemVariantsArray = null;
         JSONArray warehouseArray = null;
         JSONArray clientArray = null;
+        JSONArray customerArray = null;
 
         int itemParentPosition = 0;
         String ITEMID = "-1";
         String WAREHOUSEID = "-1";
         String CLIENTID = "-1";
+        String CUSTID = "-1";
 
         View rootView;
 
@@ -1001,6 +1007,63 @@ public class Transaction extends AppCompatActivity {
 
                     }
                 });
+
+                // logic for populating the customer spinner
+                customerSelector = rootView.findViewById(R.id.customerSelection);
+                customerTv = rootView.findViewById(R.id.custid);
+
+                String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                String customerDataURL = testEndpoint + "/api/get/all/customers/";
+                HttpGetRequest customerGetter = new HttpGetRequest();
+                try {
+                    String allCustomers = customerGetter.execute(customerDataURL).get();
+                    customerArray = new JSONArray(allCustomers);
+
+                    customers = new ArrayList<>();
+                    for (int i = 0; i < customerArray.length(); i++) {
+                        customers.add(customerArray.getJSONObject(i).getString("customerName"));
+                    }
+
+                    System.out.println(customers);
+
+                    ArrayAdapter<String> customerDisplayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, customers);
+                    customerDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                    customerSelector.setAdapter(customerDisplayAdapter);
+
+                    // by default, the first warehouse will be selected
+                    CUSTID = customerArray.getJSONObject(0).getString("customerId");
+                    customerTv.setText(CUSTID);
+
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                // logic to define what happens when a new client is selected
+                customerSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                        try {
+                            CUSTID = customerArray.getJSONObject(position).getString("customerId");
+                            customerTv.setText(CUSTID);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
 
             }
 

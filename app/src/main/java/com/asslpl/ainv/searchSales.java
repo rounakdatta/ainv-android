@@ -26,17 +26,23 @@ public class searchSales extends AppCompatActivity {
 
     JSONArray clientArray = null;
     ArrayList<String> clients = null;
+    JSONArray customerArray = null;
+    ArrayList<String> customers = null;
 
     Spinner clientSelector;
+    Spinner customerSelector;
 
     String CLIENTID = "-1";
     TextView clientIdTv;
     TextView salesTv;
+    String CUSTID = "-1";
+    TextView customerTv;
 
     EditText numberBox;
 
     CheckBox allSales;
     CheckBox allClients;
+    CheckBox allCustomers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,9 +103,66 @@ public class searchSales extends AppCompatActivity {
             }
         });
 
+        // --- customer spinner population starts
+
+        customerSelector = findViewById(R.id.customerSelector);
+        customerTv = findViewById(R.id.selectedCustomers);
+
+        String customerDataURL = testEndpoint + "/api/get/all/customers/";
+        HttpGetRequest customerGetter = new HttpGetRequest();
+        try {
+            String allCustomers = customerGetter.execute(customerDataURL).get();
+            customerArray = new JSONArray(allCustomers);
+
+            customers = new ArrayList<>();
+            for (int i = 0; i < customerArray.length(); i++) {
+                customers.add(customerArray.getJSONObject(i).getString("customerName"));
+            }
+
+            ArrayAdapter<String> customerDisplayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, customers);
+            customerDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+            customerSelector.setAdapter(customerDisplayAdapter);
+
+            CUSTID = customerArray.getJSONObject(0).getString("customerId");
+            customerTv.setText(CUSTID);
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        // logic to define what happens when a new client is selected
+        customerSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                try {
+                    CUSTID = customerArray.getJSONObject(position).getString("customerId");
+                    customerTv.setText(CUSTID);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // --- customer spinner population ends
+
         // allSales checkbox selected or deselected
         allSales = findViewById(R.id.selectAllInvoice);
         allClients = findViewById(R.id.selectAllClients);
+        allCustomers = findViewById(R.id.selectAllCustomers);
         numberBox = findViewById(R.id.trackingNumber);
         salesTv = findViewById(R.id.selectedSales);
 
@@ -130,6 +193,20 @@ public class searchSales extends AppCompatActivity {
             }
         });
 
+        // allClients checkbox selected or deselected
+        allCustomers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    customerTv.setText("all");
+                    customerSelector.setEnabled(false);
+                } else {
+                    customerTv.setText(CUSTID);
+                    customerSelector.setEnabled(true);
+                }
+            }
+        });
+
         // logic to update the salesNumber when typed
         numberBox.addTextChangedListener(new TextWatcher() {
             @Override
@@ -155,9 +232,11 @@ public class searchSales extends AppCompatActivity {
 
         TextView selectedSalesTv = findViewById(R.id.selectedSales);
         TextView selectedClientTv = findViewById(R.id.selectedClient);
+        TextView selectedCustomerTv = findViewById(R.id.selectedCustomers);
 
         viewSalesPage.putExtra("invoiceNumber", selectedSalesTv.getText());
         viewSalesPage.putExtra("clientId", selectedClientTv.getText());
+        viewSalesPage.putExtra("customerId", selectedCustomerTv.getText());
         startActivity(viewSalesPage);
         finish();
     }
