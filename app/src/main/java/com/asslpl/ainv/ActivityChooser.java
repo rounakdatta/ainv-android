@@ -49,4 +49,10 @@ public class ActivityChooser extends AppCompatActivity {
         startActivity(clientEntryPage);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
+
+    public void gotoCustomerEntryPage(View view) {
+        Intent customerEntryPage = new Intent(getApplicationContext(), CustomerEntry.class);
+        startActivity(customerEntryPage);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+    }
 }
