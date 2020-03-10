@@ -347,6 +347,10 @@ public class Transaction extends AppCompatActivity {
         TextView paymentDateHeader = mViewPager.getRootView().findViewById(R.id.expectedDateHeader);
         EditText assdValue = mViewPager.getRootView().findViewById(R.id.assdValue);
 
+        Spinner customerSelector = mViewPager.getRootView().findViewById(R.id.customerSelection);
+        TextView customerSelectorHeader = mViewPager.getRootView().findViewById(R.id.customerHeader);
+        TextView custId = mViewPager.getRootView().findViewById(R.id.custid);
+
         final EditText totalValue = mViewPager.getRootView().findViewById(R.id.totalValue);
         final EditText paidAmount = mViewPager.getRootView().findViewById(R.id.paidAmount);
 
@@ -356,6 +360,10 @@ public class Transaction extends AppCompatActivity {
             paymentDateHeader.setVisibility(View.INVISIBLE);
             paidAmount.setVisibility(View.INVISIBLE);
             paidAmount.setText("0");
+
+            custId.setText("NULL");
+            customerSelector.setVisibility(View.INVISIBLE);
+            customerSelectorHeader.setVisibility(View.INVISIBLE);
 
             TextView assessedValueHeader = mViewPager.getRootView().findViewById(R.id.assdValueHeader);
             assessedValueHeader.setVisibility(View.VISIBLE);

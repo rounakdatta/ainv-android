@@ -7,8 +7,20 @@
     tools:context=".view_sales">
 
 
+    <it.beppi.tristatetogglebutton_library.TriStateToggleButton
+        android:id="@+id/filterSwitcher"
+        android:layout_width="170dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.086"
+        app:tbDefaultStatus="mid" />
 
     <android.widget.HorizontalScrollView
+        android:id="@+id/horizontalScrollView2"
         android:layout_width="match_parent"
         android:layout_height="474dp"
         android:layout_marginTop="8dp"
@@ -28,6 +40,40 @@
 
     </android.widget.HorizontalScrollView>
 
+    <TextView
+        android:id="@+id/filterHeaderAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ALL"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/horizontalScrollView2"
+        app:layout_constraintStart_toStartOf="@+id/horizontalScrollView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.043" />
+
+    <TextView
+        android:id="@+id/filterHeaderIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IN"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/horizontalScrollView2"
+        app:layout_constraintHorizontal_bias="0.302"
+        app:layout_constraintStart_toStartOf="@+id/horizontalScrollView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.042" />
+
+    <TextView
+        android:id="@+id/filterHeaderOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OUT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/horizontalScrollView2"
+        app:layout_constraintHorizontal_bias="0.684"
+        app:layout_constraintStart_toStartOf="@+id/horizontalScrollView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.042" />
 
 
 </android.support.constraint.ConstraintLayout>

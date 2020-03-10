@@ -25,7 +25,7 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
 
         switch (columnIndex) {
             case 0:
-                renderedView = renderItemName(inv);
+                renderedView = renderClientName(inv);
                 break;
             case 1:
                 renderedView = renderItemVariant(inv);
@@ -55,7 +55,7 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
                 renderedView = renderWarehouseName(inv);
                 break;
             case 10:
-                renderedView = renderClientName(inv);
+                renderedView = renderItemName(inv);
                 break;
         }
 
