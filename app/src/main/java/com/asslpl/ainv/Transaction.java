@@ -57,6 +57,7 @@ public class Transaction extends AppCompatActivity {
 
     Dialog dialog;
 
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -428,6 +429,8 @@ public class Transaction extends AppCompatActivity {
 
         View rootView;
 
+        TinyDB tinydb;
+
 
         // for the second view
         EditText bigQuantityEntry;
@@ -483,6 +486,7 @@ public class Transaction extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState) {
 
+            tinydb = new TinyDB(getContext());
 
             int pageNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 
@@ -514,6 +518,24 @@ public class Transaction extends AppCompatActivity {
 
                     }
                 });
+
+                // permission handler
+                boolean permission_transactionIn = tinydb.getBoolean("permission_transactionIn");
+                boolean permission_transactionOut = tinydb.getBoolean("permission_transactionOut");
+
+                if (!permission_transactionIn) {
+                    entryExitSelector.check(R.id.outgoingRadio);
+                    for (int i = 0; i < entryExitSelector.getChildCount(); i++) {
+                        entryExitSelector.getChildAt(i).setEnabled(false);
+                    }
+                }
+
+                if (!permission_transactionOut) {
+                    entryExitSelector.check(R.id.incomingRadio);
+                    for (int i = 0; i < entryExitSelector.getChildCount(); i++) {
+                        entryExitSelector.getChildAt(i).setEnabled(false);
+                    }
+                }
 
                 // set the calendar dialog
                 Button dobSelector = rootView.findViewById(R.id.entryDate);

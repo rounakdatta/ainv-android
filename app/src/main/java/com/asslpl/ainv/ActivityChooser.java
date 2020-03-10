@@ -5,13 +5,52 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 
 public class ActivityChooser extends AppCompatActivity {
+
+    TinyDB tinydb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chooser);
+
+        tinydb = new TinyDB(getApplicationContext());
+
+        boolean permission_createNew = tinydb.getBoolean("permission_createNew");
+        boolean permission_transactionIn = tinydb.getBoolean("permission_transactionIn");
+        boolean permission_transactionOut = tinydb.getBoolean("permission_transactionOut");
+        boolean permission_view = tinydb.getBoolean("permission_view");
+
+        if (!permission_createNew) {
+            findViewById(R.id.clientEntryButton).setEnabled(false);
+            findViewById(R.id.itemEntryButton).setEnabled(false);
+            findViewById(R.id.warehouseEntryButton).setEnabled(false);
+            findViewById(R.id.customerEntryButton).setEnabled(false);
+        }
+
+        if (!permission_view) {
+            findViewById(R.id.stockSearchButton).setEnabled(false);
+            findViewById(R.id.salesSearchButton).setEnabled(false);
+        }
+
+        if (!permission_transactionIn && !permission_transactionOut) {
+            findViewById(R.id.transactionButton).setEnabled(false);
+        }
+
+
+        ImageView logoutButton = findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tinydb.clear();
+
+                Intent userOnboarding = new Intent(getApplicationContext(), user_onboarding.class);
+                startActivity(userOnboarding);
+                finish();
+            }
+        });
     }
 
     public void gotoWarehouseEntryPage(View view) {
