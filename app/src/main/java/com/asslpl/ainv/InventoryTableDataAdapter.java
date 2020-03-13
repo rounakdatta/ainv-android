@@ -28,34 +28,34 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
                 renderedView = renderClientName(inv);
                 break;
             case 1:
-                renderedView = renderItemVariant(inv);
+                renderedView = renderItemName(inv);
                 break;
             case 2:
-                renderedView = renderHsnCode(inv);
+                renderedView = renderItemVariant(inv);
                 break;
             case 3:
-                renderedView = renderItemQuantity(inv);
+                renderedView = renderHsnCode(inv);
                 break;
             case 4:
-                renderedView = renderUomRaw(inv);
+                renderedView = renderItemQuantity(inv);
                 break;
             case 5:
-                renderedView = renderSmallboxQuantity(inv);
+                renderedView = renderUomRaw(inv);
                 break;
             case 6:
-                renderedView = renderUomSmall(inv);
+                renderedView = renderSmallboxQuantity(inv);
                 break;
             case 7:
-                renderedView = renderBigcartonQuantity(inv);
+                renderedView = renderUomSmall(inv);
                 break;
             case 8:
-                renderedView = renderUomBig(inv);
+                renderedView = renderBigcartonQuantity(inv);
                 break;
             case 9:
-                renderedView = renderWarehouseName(inv);
+                renderedView = renderUomBig(inv);
                 break;
             case 10:
-                renderedView = renderItemName(inv);
+                renderedView = renderWarehouseName(inv);
                 break;
         }
 
