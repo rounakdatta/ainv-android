@@ -361,7 +361,7 @@ public class Transaction extends AppCompatActivity {
             paidAmount.setVisibility(View.INVISIBLE);
             paidAmount.setText("0");
 
-            custId.setText("NULL");
+            custId.setText("-1");
             customerSelector.setVisibility(View.INVISIBLE);
             customerSelectorHeader.setVisibility(View.INVISIBLE);
 

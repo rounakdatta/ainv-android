@@ -51,8 +51,8 @@
     <Button
         android:id="@+id/variantSelector"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="279dp"
-        android:layout_height="50dp"
+        android:layout_width="197dp"
+        android:layout_height="51dp"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/activity_horizontal_margin"
@@ -79,30 +79,30 @@
         android:text="All"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
+        app:layout_constraintHorizontal_bias="0.895"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.463" />
+        app:layout_constraintVertical_bias="0.464" />
 
     <TextView
         android:id="@+id/itemHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Item"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.308" />
+        app:layout_constraintVertical_bias="0.315" />
 
     <Button
         android:id="@+id/locationSelector"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="279dp"
-        android:layout_height="50dp"
+        android:layout_width="192dp"
+        android:layout_height="52dp"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/activity_horizontal_margin"
@@ -128,10 +128,10 @@
         android:text="All"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
+        app:layout_constraintHorizontal_bias="0.895"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.587" />
+        app:layout_constraintVertical_bias="0.583" />
 
     <TextView
         android:id="@+id/selectedLocations"
