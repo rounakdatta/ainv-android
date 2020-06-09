@@ -921,30 +921,31 @@ public class Transaction extends AppCompatActivity {
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                        float assdValueFloat = 0;
-                        float dutyValueFloat = 0;
-                        float gstValueFloat = 0;
+                        double assdValueFloat = 0;
+                        double dutyValueFloat = 0;
+                        double gstValueFloat = 0;
 
                         try {
-                            assdValueFloat = Float.parseFloat(String.valueOf(assdValue.getText()));
+                            assdValueFloat = Double.parseDouble(String.valueOf(assdValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         try {
-                            dutyValueFloat = Float.parseFloat(String.valueOf(dutyValue.getText()));
+                            dutyValueFloat = Double.parseDouble(String.valueOf(dutyValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         try {
-                            gstValueFloat = Float.parseFloat(String.valueOf(gstValue.getText()));
+                            gstValueFloat = Double.parseDouble(String.valueOf(gstValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
 
-                        float totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
-                        totalValue.setText(Float.toString(totalValueFloat));
+                        double totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
+                        double totalValueDouble = (Math.round((totalValueFloat) * 100) / 100.00);
+                        totalValue.setText(Double.toString(totalValueDouble));
                         totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
-                        valuePerPiece.setText(Float.toString(totalValueFloat / totalPiecesP3));
+                        valuePerPiece.setText(Double.toString(totalValueFloat / totalPiecesP3));
 
                     }
 
@@ -963,30 +964,31 @@ public class Transaction extends AppCompatActivity {
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                        float assdValueFloat = 0;
-                        float dutyValueFloat = 0;
-                        float gstValueFloat = 0;
+                        double assdValueFloat = 0;
+                        double dutyValueFloat = 0;
+                        double gstValueFloat = 0;
 
                         try {
-                            assdValueFloat = Float.parseFloat(String.valueOf(assdValue.getText()));
+                            assdValueFloat = Double.parseDouble(String.valueOf(assdValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         try {
-                            dutyValueFloat = Float.parseFloat(String.valueOf(dutyValue.getText()));
+                            dutyValueFloat = Double.parseDouble(String.valueOf(dutyValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         try {
-                            gstValueFloat = Float.parseFloat(String.valueOf(gstValue.getText()));
+                            gstValueFloat = Double.parseDouble(String.valueOf(gstValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
 
-                        float totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
-                        totalValue.setText(Float.toString(totalValueFloat));
+                        double totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
+                        double totalValueDouble = (Math.round((totalValueFloat) * 100) / 100.00);
+                        totalValue.setText(Double.toString(totalValueDouble));
                         totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
-                        valuePerPiece.setText(Float.toString(totalValueFloat / totalPiecesP3));
+                        valuePerPiece.setText(Double.toString(totalValueFloat / totalPiecesP3));
 
                     }
 
@@ -1005,30 +1007,31 @@ public class Transaction extends AppCompatActivity {
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                        float assdValueFloat = 0;
-                        float dutyValueFloat = 0;
-                        float gstValueFloat = 0;
+                        double assdValueFloat = 0;
+                        double dutyValueFloat = 0;
+                        double gstValueFloat = 0;
 
                         try {
-                            assdValueFloat = Float.parseFloat(String.valueOf(assdValue.getText()));
+                            assdValueFloat = Double.parseDouble(String.valueOf(assdValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         try {
-                            dutyValueFloat = Float.parseFloat(String.valueOf(dutyValue.getText()));
+                            dutyValueFloat = Double.parseDouble(String.valueOf(dutyValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         try {
-                            gstValueFloat = Float.parseFloat(String.valueOf(gstValue.getText()));
+                            gstValueFloat = Double.parseDouble(String.valueOf(gstValue.getText()));
                         } catch (Exception e) {
                             System.out.println(e);
                         }
 
-                        float totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
-                        totalValue.setText(Float.toString(totalValueFloat));
+                        double totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
+                        double totalValueDouble = (Math.round((totalValueFloat) * 100) / 100.00);
+                        totalValue.setText(Double.toString(totalValueDouble));
                         totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
-                        valuePerPiece.setText(Float.toString(totalValueFloat / totalPiecesP3));
+                        valuePerPiece.setText(Double.toString(totalValueFloat / totalPiecesP3));
 
                     }
 
