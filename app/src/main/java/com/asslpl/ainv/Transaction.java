@@ -47,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -163,6 +164,16 @@ public class Transaction extends AppCompatActivity {
         TextView warehouseIdTv = mViewPager.getRootView().findViewById(R.id.warehouseId);
         TextView comeOrGoTv = mViewPager.getRootView().findViewById(R.id.comeOrGo);
         EditText clientTv = mViewPager.getRootView().findViewById(R.id.clientId);
+
+        try {
+            if (comeOrGoTv.getText().equals("X")) {
+                Toast movementBlocker = Toast.makeText(getApplicationContext(), "Incoming / Outgoing Not Selected!", Toast.LENGTH_SHORT);
+                movementBlocker.show();
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Falling back");
+        }
 
 
         try {
@@ -345,7 +356,13 @@ public class Transaction extends AppCompatActivity {
         CheckBox paidTv = mViewPager.getRootView().findViewById(R.id.isPaid);
         TextView paymentDate = mViewPager.getRootView().findViewById(R.id.expectedDate);
         TextView paymentDateHeader = mViewPager.getRootView().findViewById(R.id.expectedDateHeader);
+
         EditText assdValue = mViewPager.getRootView().findViewById(R.id.assdValue);
+        EditText dutyValue = mViewPager.getRootView().findViewById(R.id.dutyValue);
+        EditText gstValue = mViewPager.getRootView().findViewById(R.id.gstValue);
+        EditText valuePerPiece = mViewPager.getRootView().findViewById(R.id.valuePerPiece);
+
+        TextView totalPcsP3 = mViewPager.getRootView().findViewById(R.id.totalPieces);
 
         Spinner customerSelector = mViewPager.getRootView().findViewById(R.id.customerSelection);
         TextView customerSelectorHeader = mViewPager.getRootView().findViewById(R.id.customerHeader);
@@ -385,6 +402,37 @@ public class Transaction extends AppCompatActivity {
 
             TextView dutyValueHeader = mViewPager.getRootView().findViewById(R.id.dutyValueHeader);
             dutyValueHeader.setText("Material Value");
+        }
+
+        // update the values on page start
+        {
+            double assdValueFloat = 0;
+            double dutyValueFloat = 0;
+            double gstValueFloat = 0;
+
+            try {
+                assdValueFloat = Double.parseDouble(String.valueOf(assdValue.getText()));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            try {
+                dutyValueFloat = Double.parseDouble(String.valueOf(dutyValue.getText()));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            try {
+                gstValueFloat = Double.parseDouble(String.valueOf(gstValue.getText()));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            double totalValueFloat = assdValueFloat + dutyValueFloat + gstValueFloat;
+            double totalValueDouble = (Math.round((totalValueFloat) * 100) / 100.00);
+            totalValue.setText(Double.toString(totalValueDouble));
+            float totalPiecesP3Float = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
+
+            final DecimalFormat df = new DecimalFormat("#.00");
+            valuePerPiece.setText(df.format(totalValueFloat / totalPiecesP3Float));
         }
 
         paidTv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -891,6 +939,8 @@ public class Transaction extends AppCompatActivity {
                 // third page - item valuation details
                 rootView = inflater.inflate(R.layout.fragment_transaction_p3, container, false);
 
+                final DecimalFormat df = new DecimalFormat("#.00");
+
                 assdValue = rootView.findViewById(R.id.assdValue);
                 dutyValue = rootView.findViewById(R.id.dutyValue);
                 gstValue = rootView.findViewById(R.id.gstValue);
@@ -945,7 +995,7 @@ public class Transaction extends AppCompatActivity {
                         double totalValueDouble = (Math.round((totalValueFloat) * 100) / 100.00);
                         totalValue.setText(Double.toString(totalValueDouble));
                         totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
-                        valuePerPiece.setText(Double.toString(totalValueFloat / totalPiecesP3));
+                        valuePerPiece.setText(df.format(totalValueFloat / totalPiecesP3));
 
                     }
 
@@ -988,7 +1038,7 @@ public class Transaction extends AppCompatActivity {
                         double totalValueDouble = (Math.round((totalValueFloat) * 100) / 100.00);
                         totalValue.setText(Double.toString(totalValueDouble));
                         totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
-                        valuePerPiece.setText(Double.toString(totalValueFloat / totalPiecesP3));
+                        valuePerPiece.setText(df.format(totalValueFloat / totalPiecesP3));
 
                     }
 
@@ -1031,7 +1081,7 @@ public class Transaction extends AppCompatActivity {
                         double totalValueDouble = (Math.round((totalValueFloat) * 100) / 100.00);
                         totalValue.setText(Double.toString(totalValueDouble));
                         totalPiecesP3 = Float.parseFloat(String.valueOf(totalPcsP3.getText()));
-                        valuePerPiece.setText(Double.toString(totalValueFloat / totalPiecesP3));
+                        valuePerPiece.setText(df.format(totalValueFloat / totalPiecesP3));
 
                     }
 

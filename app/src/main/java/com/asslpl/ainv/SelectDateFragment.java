@@ -31,7 +31,10 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
         int mm = calendar.get(Calendar.MONTH);
         int dd = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog dp = new DatePickerDialog(getActivity(), this, yy, mm, dd);
-        dp.getDatePicker().setMinDate(System.currentTimeMillis());
+
+        // Uncomment this to allow minimum selectable date to be >= today
+        // dp.getDatePicker().setMinDate(System.currentTimeMillis());
+
         return dp;
     }
 

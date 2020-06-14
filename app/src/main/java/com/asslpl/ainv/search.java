@@ -78,7 +78,7 @@ public class search extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            ArrayAdapter<String> itemDisplayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, itemNames);
+            ArrayAdapter<String> itemDisplayAdapter = new ArrayAdapter<>(search.this, android.R.layout.simple_spinner_item, itemNames);
             itemDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             //adapter.setDropDownViewResource(R.layout.custom_spinner);
             itemSelector.setAdapter(itemDisplayAdapter);

@@ -64,7 +64,7 @@ public class searchSales extends AppCompatActivity {
                 clients.add(clientArray.getJSONObject(i).getString("clientName"));
             }
 
-            ArrayAdapter<String> clientDisplayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, clients);
+            ArrayAdapter<String> clientDisplayAdapter = new ArrayAdapter<>(searchSales.this, android.R.layout.simple_spinner_item, clients);
             clientDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             clientSelector.setAdapter(clientDisplayAdapter);
 
@@ -119,7 +119,7 @@ public class searchSales extends AppCompatActivity {
                 customers.add(customerArray.getJSONObject(i).getString("customerName"));
             }
 
-            ArrayAdapter<String> customerDisplayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, customers);
+            ArrayAdapter<String> customerDisplayAdapter = new ArrayAdapter<>(searchSales.this, android.R.layout.simple_spinner_item, customers);
             customerDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             customerSelector.setAdapter(customerDisplayAdapter);
 
