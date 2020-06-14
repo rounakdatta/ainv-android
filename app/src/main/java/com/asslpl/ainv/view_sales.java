@@ -23,7 +23,7 @@ public class view_sales extends AppCompatActivity {
     private List<Invoice> dataToShow = new ArrayList<>();
     private List<Invoice> headerData = new ArrayList<>();
 
-    private static final String[] TABLE_HEADERS = { "Sales Invoice Number", "Entry Date", "Item", "Warehouse", "Client Name", "Customer Name", "Change in Stock", "Total Pieces", "Total Payment", "Is Paid?", "Paid Amount", "Balance", "Cumulative Balance", "Expected Payment Date" };
+    private static final String[] TABLE_HEADERS = { "Sales Invoice No.", "Entry Date", "Item", "Warehouse", "Client Name", "Customer Name", "Change in Stock", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date" };
 
     public void retrieveData(String filter) {
         Intent intent = getIntent();
@@ -77,7 +77,9 @@ public class view_sales extends AppCompatActivity {
 
         TableView tableView = (TableView) findViewById(R.id.tableView);
 //        tableView.setColumnCount(4);
-        tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, TABLE_HEADERS));
+        SimpleTableHeaderAdapter sha = new SimpleTableHeaderAdapter(this, TABLE_HEADERS);
+        sha.setTextSize(14);
+        tableView.setHeaderAdapter(sha);
         tableView.setDataAdapter(new InvoiceTableDataAdapter (this, dataToShow));
     }
 

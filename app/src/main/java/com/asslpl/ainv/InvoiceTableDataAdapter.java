@@ -133,7 +133,11 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
     }
 
     private View renderIsPaid(final Invoice inv) {
-        return renderString(inv.isPaid);
+        if (inv.isPaid.equals("0")) {
+            return renderString("No");
+        } else {
+            return renderString("Yes");
+        }
     }
 
     private View renderExpectedPaymentDate(final Invoice inv, final int rowIndex) {
@@ -145,7 +149,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         textView.setText(value);
         textView.setId(rowIndex);
         textView.setPadding(20, 10, 20, 10);
-        textView.setTextSize(20);
+        textView.setTextSize(15);
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,9 +247,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         textView.setText(value);
         textView.setId(rowIndex + 999);
         textView.setPadding(20, 10, 20, 10);
-        textView.setTextSize(20);
-
-
+        textView.setTextSize(15);
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -286,7 +288,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         final TextView textView = new TextView(getContext());
         textView.setText(value);
         textView.setPadding(20, 10, 20, 10);
-        textView.setTextSize(20);
+        textView.setTextSize(15);
 
         return textView;
     }
@@ -296,7 +298,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         textView.setText(value);
         textView.setId(rowIndex + 443);
         textView.setPadding(20, 10, 20, 10);
-        textView.setTextSize(20);
+        textView.setTextSize(15);
 
         return textView;
     }

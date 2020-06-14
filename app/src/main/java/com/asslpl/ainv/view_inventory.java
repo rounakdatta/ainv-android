@@ -90,7 +90,10 @@ public class view_inventory extends AppCompatActivity {
 
         TableView tableView = (TableView) findViewById(R.id.tableView);
 //        tableView.setColumnCount(4);
-        tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, TABLE_HEADERS));
+        SimpleTableHeaderAdapter sha = new SimpleTableHeaderAdapter(this, TABLE_HEADERS);
+        sha.setTextSize(14);
+        tableView.setHeaderAdapter(sha);
+
         tableView.setDataAdapter(new InventoryTableDataAdapter (this, dataToShow));
 
     }
