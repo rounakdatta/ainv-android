@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class search extends AppCompatActivity {
 
@@ -44,6 +46,13 @@ public class search extends AppCompatActivity {
     ArrayList<String> itemVariants = new ArrayList<>();
     ArrayList<String> itemVariantIds = new ArrayList<>();
 
+    JSONArray clientArray = null;
+    ArrayList<String> clients = null;
+    ArrayList<String> clientsNums = null;
+    Spinner clientSelector;
+    String CLIENTID = "-1";
+    TextView clientIdTv;
+    CheckBox allClients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +100,77 @@ public class search extends AppCompatActivity {
             toast.show();
 
         }
+
+        clientSelector = findViewById(R.id.clientSelector);
+        clientIdTv = findViewById(R.id.selectedClient);
+
+        String clientDataURL = testEndpoint + "/api/get/all/clients/";
+        HttpGetRequest clientGetter = new HttpGetRequest();
+        try {
+            String allClients= clientGetter.execute(clientDataURL).get();
+            clientArray = new JSONArray(allClients);
+
+            clients = new ArrayList<>();
+            clientsNums = new ArrayList<>();
+            for (int i = 0; i < clientArray.length(); i++) {
+                clients.add(clientArray.getJSONObject(i).getString("clientName"));
+                clientsNums.add(clientArray.getJSONObject(i).getString("clientId"));
+            }
+
+            ArrayAdapter<String> clientDisplayAdapter = new ArrayAdapter<>(search.this, android.R.layout.simple_spinner_item, clients);
+            clientDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+            clientSelector.setAdapter(clientDisplayAdapter);
+
+            // by default, the first warehouse will be selected
+            CLIENTID = clientArray.getJSONObject(0).getString("clientId");
+            clientIdTv.setText(CLIENTID);
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // logic to define what happens when a new client is selected
+        clientSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                try {
+                    CLIENTID = clientArray.getJSONObject(position).getString("clientId");
+                    clientIdTv.setText(CLIENTID);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        allClients = findViewById(R.id.selectAllClients);
+        // allClients checkbox selected or deselected
+        allClients.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                System.out.println(clientsNums.toString());
+                if (isChecked) {
+                    String selectedClients = TextUtils.join(" ", clientsNums);
+                    clientIdTv.setText(selectedClients);
+                    clientSelector.setEnabled(false);
+                } else {
+                    clientIdTv.setText(CLIENTID);
+                    clientSelector.setEnabled(true);
+                }
+            }
+        });
 
         itemSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -203,6 +283,8 @@ public class search extends AppCompatActivity {
 
             return;
         }
+
+
 
 
 
@@ -346,6 +428,7 @@ public class search extends AppCompatActivity {
 
         viewInventoryPage.putExtra("locations", queryLocationsString);
         viewInventoryPage.putExtra("id", queryIdsString);
+        viewInventoryPage.putExtra("clients", clientIdTv.getText());
 
         Log.e("locations", queryLocationsString);
         Log.e("id", queryIdsString);

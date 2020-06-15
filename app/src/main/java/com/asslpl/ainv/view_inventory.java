@@ -35,13 +35,14 @@ public class view_inventory extends AppCompatActivity {
 
         String locationsRequest = intent.getStringExtra("locations");
         String idRequest = intent.getStringExtra("id");
+        String clientRequest = intent.getStringExtra("clients");
 
         Log.e("locations", locationsRequest);
         Log.e("ids", idRequest);
 
         String testEndpoint = getResources().getString(R.string.serverEndpoint);
         String searchURL = testEndpoint + "/api/search/items/";
-        String searchRequests = "itemId=" + idRequest + "&locations=" + locationsRequest;
+        String searchRequests = "itemId=" + idRequest + "&locations=" + locationsRequest + "&clients=" + clientRequest;
 
         String searchResponse = "NULL";
         JSONArray searchResponseArray = null;
