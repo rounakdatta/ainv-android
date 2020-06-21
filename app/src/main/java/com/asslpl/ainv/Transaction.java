@@ -29,6 +29,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -514,6 +515,10 @@ public class Transaction extends AppCompatActivity {
         TextView billOrSalesHeader;
         EditText billOrSalesText;
 
+        TextView billSelectorHeader;
+        Spinner billSelector;
+        TextView billRef;
+
         float totalPiecesP3;
 
 
@@ -557,6 +562,11 @@ public class Transaction extends AppCompatActivity {
                 billOrSalesHeader = rootView.findViewById(R.id.billOfEntryHeader);
                 billOrSalesText = rootView.findViewById(R.id.billOfEntry);
 
+                billSelectorHeader = rootView.findViewById(R.id.beSelectorHeader);
+                billSelector = rootView.findViewById(R.id.beSelector);
+                billRef = rootView.findViewById(R.id.BILLREF);
+                billRef.setText("N/A");
+
                 entryExitSelector.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -566,10 +576,62 @@ public class Transaction extends AppCompatActivity {
                             comeOrGo.setText("+");
                             billOrSalesHeader.setText("Bill of Entry");
                             billOrSalesText.setHint("Bill of Entry Number");
+
+                            billSelectorHeader.setVisibility(View.INVISIBLE);
+                            billSelector.setVisibility(View.INVISIBLE);
+                            billRef.setText("N/A");
+
                         } else if (R.id.outgoingRadio == checkedId) {
                             comeOrGo.setText("-");
                             billOrSalesHeader.setText("Sales Invoice");
                             billOrSalesText.setHint("Sales Invoice Number");
+
+                            billSelectorHeader.setVisibility(View.VISIBLE);
+                            billRef.setText("");
+                            billSelector.setVisibility(View.VISIBLE);
+
+                            String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                            String billDataURL = testEndpoint + "/api/get/all/bills/";
+
+                            JSONArray allBillsArray;
+                            final ArrayList<Object> billIds = new ArrayList<>();
+
+                            HttpGetRequest billGetter = new HttpGetRequest();
+                            try {
+                                String allBills = billGetter.execute(billDataURL).get();
+                                allBillsArray = new JSONArray(allBills);
+                                ArrayList<String> billNums = new ArrayList<>();
+
+                                for (int i = 0; i < allBillsArray.length(); i++) {
+                                    billNums.add(allBillsArray.getJSONObject(i).getString("billOfEntryNumber"));
+                                    billIds.add(allBillsArray.getJSONObject(i).getString("billOfEntryId"));
+                                }
+
+                                ArrayAdapter<String> billSelectorAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, billNums);
+                                billSelectorAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                                billSelector.setAdapter(billSelectorAdapter);
+
+                            } catch(Exception e) {
+                                System.out.println(e);
+
+                                Context context = rootView.getContext();
+                                Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+                                toast.show();
+
+                                return;
+                            }
+
+                            billSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                    billRef.setText(billIds.get(i).toString());
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                }
+                            });
                         }
 
                     }
