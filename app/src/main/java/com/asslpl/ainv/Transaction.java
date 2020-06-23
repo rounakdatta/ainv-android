@@ -1,10 +1,7 @@
 package com.asslpl.ainv;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
@@ -17,15 +14,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.view.ViewParent;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,11 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,12 +36,11 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -221,6 +210,8 @@ public class Transaction extends AppCompatActivity {
         TextView fe4p1 = mViewPager.getRootView().findViewById(R.id.warehouseId);
         TextView fe5p1 = mViewPager.getRootView().findViewById(R.id.comeOrGo);
         TextView fe6p1 = mViewPager.getRootView().findViewById(R.id.clientId);
+        EditText fe7p1 = mViewPager.getRootView().findViewById(R.id.billRef);
+        TextView fe8p1 = mViewPager.getRootView().findViewById(R.id.oldOrNew);
 
         // picking values from the second page
         mViewPager.setCurrentItem(1);
@@ -265,7 +256,7 @@ public class Transaction extends AppCompatActivity {
             plusOrMinus = "in";
         }
 
-        String data = "trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&customerId=" + fe10p3.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
+        String data = "oldOrNew=" + fe8p1.getText() + "&billRef=" + fe7p1.getText() + "&trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&customerId=" + fe10p3.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
         Log.e("postingData", data);
 
         HttpPostRequest insertHttp = new HttpPostRequest();
@@ -517,7 +508,12 @@ public class Transaction extends AppCompatActivity {
 
         TextView billSelectorHeader;
         Spinner billSelector;
-        TextView billRef;
+        AutoCompleteTextView invSelector;
+        EditText billRef;
+
+        EditText entryDateHeader;
+
+        TextView oldOrNew;
 
         float totalPiecesP3;
 
@@ -564,8 +560,14 @@ public class Transaction extends AppCompatActivity {
 
                 billSelectorHeader = rootView.findViewById(R.id.beSelectorHeader);
                 billSelector = rootView.findViewById(R.id.beSelector);
-                billRef = rootView.findViewById(R.id.BILLREF);
+                billRef = rootView.findViewById(R.id.billRef);
                 billRef.setText("N/A");
+
+                invSelector = rootView.findViewById(R.id.billOfEntry);
+
+                entryDateHeader = rootView.findViewById(R.id.entryDateHeader);
+
+                oldOrNew = rootView.findViewById(R.id.oldOrNew);
 
                 entryExitSelector.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
@@ -630,6 +632,75 @@ public class Transaction extends AppCompatActivity {
                                 @Override
                                 public void onNothingSelected(AdapterView<?> adapterView) {
 
+                                }
+                            });
+
+                            final String invDataURL = testEndpoint + "/api/get/all/invoices/";
+
+                            JSONArray allInvArray;
+                            final ArrayList<Object> invIds = new ArrayList<>();
+                            final ArrayList<Object> invDates = new ArrayList<>();
+                            final HashMap<String, String> invDatesMapper = new HashMap<String, String>();
+
+                            HttpGetRequest invGetter = new HttpGetRequest();
+                            try {
+                                String allInvs = invGetter.execute(invDataURL).get();
+                                allInvArray = new JSONArray(allInvs);
+                                ArrayList<String> invNums = new ArrayList<>();
+
+                                for (int i = 0; i < allInvArray.length(); i++) {
+                                    invNums.add(allInvArray.getJSONObject(i).getString("salesInvoiceNumber"));
+                                    invIds.add(allInvArray.getJSONObject(i).getString("salesInvoiceId"));
+                                    invDates.add(allInvArray.getJSONObject(i).getString("salesInvoiceDate"));
+
+                                    invDatesMapper.put(allInvArray.getJSONObject(i).getString("salesInvoiceNumber"), allInvArray.getJSONObject(i).getString("salesInvoiceId"));
+                                }
+
+                                ArrayAdapter<String> invSelectorAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, invNums);
+                                invSelectorAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+                                invSelector.setThreshold(0);
+                                invSelector.setAdapter(invSelectorAdapter);
+
+                            } catch(Exception e) {
+                                System.out.println(e);
+
+                                Context context = rootView.getContext();
+                                Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+                                toast.show();
+
+                                return;
+                            }
+
+                            invSelector.addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                }
+
+                                @Override
+                                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable editable) {
+                                    String writtenInvoiceNumber = editable.toString();
+                                    if (invDatesMapper.containsKey(writtenInvoiceNumber)) {
+                                        String invoiceId = invDatesMapper.get(writtenInvoiceNumber);
+
+                                        String invoiceDate = (String) invDates.get(Integer.parseInt(invoiceId));
+
+                                        entryDateHeader.setText(invoiceDate);
+                                        entryDateHeader.setEnabled(false);
+                                        oldOrNew.setVisibility(View.INVISIBLE);
+                                        oldOrNew.setText(invoiceId);
+                                    } else {
+                                        entryDateHeader.setText("");
+                                        entryDateHeader.setEnabled(true);
+                                        oldOrNew.setText("New!");
+                                        oldOrNew.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             });
                         }
