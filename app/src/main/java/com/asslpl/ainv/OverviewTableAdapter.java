@@ -129,7 +129,18 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
     }
 
     private View renderBalance(final Overview inv) {
-        return renderString(inv.balance);
+        Double balanceToPay = Double.parseDouble(inv.balance);
+        String balanceToShow = String.valueOf(Math.round(balanceToPay));
+
+        if (balanceToPay < 1) {
+            balanceToShow = "< 1";
+        } else if (balanceToPay > 1 && balanceToPay < 5) {
+            balanceToShow = "< 5";
+        } else {
+            balanceToShow = "~ " + balanceToShow;
+        }
+
+        return renderString(balanceToShow);
     }
     private View renderCumulativeBalance(final Overview inv) {
         return renderString(inv.cumulativeBalance);
@@ -140,11 +151,7 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
     }
 
     private View renderIsPaid(final Overview inv) {
-        if (inv.isPaid.equals("0")) {
-            return renderString("No");
-        } else {
-            return renderString("Yes");
-        }
+        return renderString(inv.isPaid);
     }
 
     private View renderExpectedPaymentDate(final Overview inv, final int rowIndex) {

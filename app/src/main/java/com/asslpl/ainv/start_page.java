@@ -87,6 +87,9 @@ public class start_page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_page);
 
+        TextView versionBox = findViewById(R.id.appVersion);
+        versionBox.setText("Version " + BuildConfig.VERSION_NAME);
+
         heartBeatActivity();
 
         final Handler handler = new Handler();

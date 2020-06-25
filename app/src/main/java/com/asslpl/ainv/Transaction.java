@@ -367,6 +367,13 @@ public class Transaction extends AppCompatActivity {
         TextView totalPcs = mViewPager.getRootView().findViewById(R.id.totalPcs);
         String totalPcsCount = String.valueOf(totalPcs.getText());
 
+        TextView totalValueSecond = mViewPager.getRootView().findViewById(R.id.finalValue);
+        if (Double.parseDouble(totalValueSecond.getText().toString()) < 0) {
+            Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Number of items cannot be negative!", Toast.LENGTH_LONG);
+            negativeValueBlocker.show();
+            return;
+        }
+
         mViewPager.setCurrentItem(2);
 
         TextView totalPieces = mViewPager.getRootView().findViewById(R.id.totalPieces);
@@ -1446,7 +1453,7 @@ public class Transaction extends AppCompatActivity {
 
                         try {
                             CUSTID = customerArray.getJSONObject(position).getString("customerId");
-                            if (customerTv.getText().toString().equals("XX")) {
+                            if (!customerTv.getText().toString().contains("$")) {
                                 customerTv.setText(CUSTID);
                             }
 
