@@ -39,45 +39,48 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
 
         switch (columnIndex) {
             case 0:
-                renderedView = renderInvoiceNumber(inv);
+                renderedView = renderBill(inv);
                 break;
             case 1:
-                renderedView = renderEntryDate(inv);
+                renderedView = renderInvoiceNumber(inv);
                 break;
             case 2:
-                renderedView = renderItem(inv);
+                renderedView = renderEntryDate(inv);
                 break;
             case 3:
-                renderedView = renderWarehouse(inv);
+                renderedView = renderItem(inv);
                 break;
             case 4:
-                renderedView = renderClient(inv);
+                renderedView = renderWarehouse(inv);
                 break;
             case 5:
-                renderedView = renderCustomer(inv);
+                renderedView = renderClient(inv);
                 break;
             case 6:
-                renderedView = renderStockChange(inv);
+                renderedView = renderCustomer(inv);
                 break;
             case 7:
-                renderedView = renderTotalPcs(inv);
+                renderedView = renderStockChange(inv);
                 break;
             case 8:
-                renderedView = renderTotalPayment(inv);
+                renderedView = renderTotalPcs(inv);
                 break;
             case 9:
-                renderedView = renderIsPaid(inv);
+                renderedView = renderTotalPayment(inv);
                 break;
             case 10:
-                renderedView = renderPaidAmount(inv);
+                renderedView = renderIsPaid(inv);
                 break;
             case 11:
-                renderedView = renderBalance(inv);
+                renderedView = renderPaidAmount(inv);
                 break;
             case 12:
-                renderedView = renderCumulativeBalance(inv);
+                renderedView = renderBalance(inv);
                 break;
             case 13:
+                renderedView = renderCumulativeBalance(inv);
+                break;
+            case 14:
                 renderedView = renderExpectedPaymentDate(inv, rowIndex);
                 break;
         }
@@ -85,8 +88,12 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         return renderedView;
     }
 
+    private View renderBill(final Invoice inv) {
+        return renderString(inv.billOfEntry);
+    }
+
     private View renderInvoiceNumber(final Invoice inv) {
-        return renderString(inv.trackingNumber);
+        return renderString(inv.salesInvoice);
     }
 
     private View renderEntryDate(final Invoice inv) {

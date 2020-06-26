@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Register"></activity>
+        <activity android:name=".sales_deep_search"></activity>
+        <activity android:name=".Register" />
         <activity android:name=".CustomerEntry" />
         <activity android:name=".ClientEntry" />
         <activity android:name=".view_sales" />

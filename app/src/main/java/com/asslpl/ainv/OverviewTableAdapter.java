@@ -16,13 +16,17 @@ import android.widget.Toast;
 
 import com.rey.material.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.codecrafters.tableview.TableDataAdapter;
+import de.codecrafters.tableview.TableView;
+import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
 import static java.lang.Float.parseFloat;
 
@@ -53,10 +57,10 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
             case 4:
                 renderedView = renderItem(inv);
                 break;
-            case 5:
+            case 6:
                 renderedView = renderWarehouse(inv);
                 break;
-            case 6:
+            case 5:
                 renderedView = renderClient(inv);
                 break;
             case 7:
@@ -89,43 +93,43 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
     }
 
     private View renderDirection(final Overview inv) {
-        return renderString(inv.direction);
+        return renderString(inv, inv.direction);
     }
 
     private View renderBillOfEntry(final Overview inv) {
-        return renderString(inv.billOfEntry);
+        return renderString(inv, inv.billOfEntry);
     }
 
     private View renderSalesInvoice(final Overview inv) {
-        return renderString(inv.salesInvoice);
+        return renderString(inv, inv.salesInvoice);
     }
 
     private View renderTotalQuantity(final Overview inv) {
-        return renderString(inv.bigQuantity);
+        return renderString(inv, inv.bigQuantity);
     }
 
     private View renderEntryDate(final Overview inv) {
-        return renderString(inv.entryDate);
+        return renderString(inv, inv.entryDate);
     }
 
     private View renderItem(final Overview inv) {
-        return renderString(inv.item);
+        return renderString(inv, inv.item);
     }
 
     private View renderWarehouse(final Overview inv) {
-        return renderString(inv.warehouse);
+        return renderString(inv, inv.warehouse);
     }
 
     private View renderClient(final Overview inv) {
-        return renderString(inv.client);
+        return renderString(inv, inv.client);
     }
 
     private View renderCustomer(final Overview inv) {
-        return renderString(inv.customer);
+        return renderString(inv, inv.customer);
     }
 
     private View renderTotalPayment(final Overview inv) {
-        return renderPaymentAmountColumn(inv.totalValue, Double.parseDouble(inv.totalValue));
+        return renderPaymentAmountColumn(inv, inv.totalValue, Double.parseDouble(inv.totalValue));
     }
 
     private View renderBalance(final Overview inv) {
@@ -140,34 +144,102 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
             balanceToShow = "~ " + balanceToShow;
         }
 
-        return renderString(balanceToShow);
+        return renderString(inv, balanceToShow);
     }
     private View renderCumulativeBalance(final Overview inv) {
-        return renderString(inv.cumulativeBalance);
+        return renderString(inv, inv.cumulativeBalance);
     }
 
     private View renderPaidAmount(final Overview inv) {
-        return renderString(inv.paidAmount);
+        return renderString(inv, inv.paidAmount);
     }
 
     private View renderIsPaid(final Overview inv) {
-        return renderString(inv.isPaid);
+        return renderString(inv, inv.isPaid);
     }
 
     private View renderExpectedPaymentDate(final Overview inv, final int rowIndex) {
-        return renderString(inv.date);
+        return renderString(inv, inv.date);
     }
 
-    private View renderString(final String value) {
+    private View renderString(final Overview inv, final String value) {
         final TextView textView = new TextView(getContext());
         textView.setText(value);
         textView.setPadding(20, 10, 20, 10);
         textView.setTextSize(15);
 
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.activity_sales_deep_search);
+                dialog.show();
+
+                List<Invoice> dataToShow = new ArrayList<>();
+                List<Invoice> headerData = new ArrayList<>();
+
+                String requestedBillOfEntry = inv.billOfEntryId;
+
+                String[] TABLE_HEADERS = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Warehouse", "Client Name", "Customer Name", "Change in Stock", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date" };
+
+                String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                String searchURL = testEndpoint + "/api/search/sales/";
+                String searchRequests = "billOfEntry=" + requestedBillOfEntry + "&clientId=" + "all" + "&customerId=" + "all" + "&filter=" + "in";
+
+                System.out.println(searchRequests);
+
+                String searchResponse = "NULL";
+                JSONArray searchResponseArray = null;
+                ArrayList<JSONObject> salesCollection = new ArrayList<>();
+
+                HttpPostRequest searchHttp = new HttpPostRequest();
+                try {
+                    searchResponse = searchHttp.execute(searchURL, searchRequests).get();
+                    System.out.println(searchResponse.toString());
+                    searchResponseArray = new JSONArray(searchResponse);
+
+                    float cumulativeBalance = 0;
+
+                    salesCollection = new ArrayList<>();
+                    for (int i = 0; i < searchResponseArray.length(); i++) {
+                        JSONObject salesTicket = searchResponseArray.getJSONObject(i);
+                        float balanceValue = Float.parseFloat(salesTicket.getString("totalValue")) - Float.parseFloat(salesTicket.getString("paidAmount"));
+
+                        if (salesTicket.getString("comeOrGo").equals("out")) {
+                            cumulativeBalance += balanceValue;
+                        }
+
+                        Invoice foo = new Invoice(salesTicket.getString("transactionId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoice"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("customerId"), salesTicket.getString("customerName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), salesTicket.getString("paymentDate"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance));
+                        dataToShow.add(foo);
+                    }
+
+//            Toast toast = Toast.makeText(context, searchResponse, Toast.LENGTH_LONG);
+//            toast.show();
+
+                } catch (ExecutionException e) {
+                    searchResponse = "EXC";
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    searchResponse = "IP";
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                TableView tableView = (TableView) dialog.findViewById(R.id.tableView);
+                SimpleTableHeaderAdapter sha = new SimpleTableHeaderAdapter(getContext(), TABLE_HEADERS);
+                sha.setTextSize(14);
+                tableView.setHeaderAdapter(sha);
+                tableView.setDataAdapter(new InvoiceTableDataAdapter (getContext(), dataToShow));
+
+                dialog.setCancelable(true);
+            }
+        });
+
         return textView;
     }
 
-    private View renderPaymentAmountColumn(final String value, final double rowIndex) {
+    private View renderPaymentAmountColumn(final Overview inv, final String value, final double rowIndex) {
         final TextView textView = new TextView(getContext());
         textView.setText(value);
         textView.setId((int)rowIndex + 443);

@@ -430,7 +430,7 @@ public class Transaction extends AppCompatActivity {
             assdValue.setVisibility(View.INVISIBLE);
 
             TextView dutyValueHeader = mViewPager.getRootView().findViewById(R.id.dutyValueHeader);
-            dutyValueHeader.setText("Material Value");
+            dutyValueHeader.setText("Sale / Serv. Inv. Basic Value");
 
 
             // correctly set the customer auto selections
