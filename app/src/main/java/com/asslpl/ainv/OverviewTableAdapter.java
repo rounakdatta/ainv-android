@@ -182,7 +182,8 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
                 String requestedBillOfEntry = inv.billOfEntryId;
                 String requestedDirection = inv.direction;
 
-                String[] TABLE_HEADERS = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date" };
+                String[] TABLE_HEADERS_IN = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "CFS Delv. Date", "Client Delv. Date", "Remarks" };
+                String[] TABLE_HEADERS_OUT = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "Serv. Inv. Ack. Date", "Sale Inv. Ack. Date", "Remarks" };
 
                 String testEndpoint = getResources().getString(R.string.serverEndpoint);
                 String searchURL = testEndpoint + "/api/search/sales/";
@@ -211,7 +212,7 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
                             cumulativeBalance += balanceValue;
                         }
 
-                        Invoice foo = new Invoice(dialog, salesTicket.getString("transactionId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoice"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("customerId"), salesTicket.getString("customerName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), salesTicket.getString("paymentDate"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance));
+                        Invoice foo = new Invoice(dialog, salesTicket.getString("transactionId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoice"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("customerId"), salesTicket.getString("customerName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), salesTicket.getString("paymentDate"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance), salesTicket.getString("field1"), salesTicket.getString("field2"), salesTicket.getString("remarks"));
                         dataToShow.add(foo);
                     }
 
@@ -229,7 +230,14 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
                 }
 
                 TableView tableView = (TableView) dialog.findViewById(R.id.tableView);
-                SimpleTableHeaderAdapter sha = new SimpleTableHeaderAdapter(getContext(), TABLE_HEADERS);
+
+                SimpleTableHeaderAdapter sha;
+                if (inv.direction.equals("in")) {
+                    sha = new SimpleTableHeaderAdapter(getContext(), TABLE_HEADERS_IN);
+                } else {
+                    sha = new SimpleTableHeaderAdapter(getContext(), TABLE_HEADERS_OUT);
+                }
+
                 sha.setTextSize(14);
                 tableView.setHeaderAdapter(sha);
                 tableView.setDataAdapter(new InvoiceTableDataAdapter (getContext(), dataToShow));

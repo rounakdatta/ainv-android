@@ -30,10 +30,13 @@ public class Invoice {
     public String paymentDate;
     public String balance;
     public String cumulativeBalance;
+    public String field1;
+    public String field2;
+    public String remarks;
 
     Dialog dg;
 
-        public Invoice(final Dialog dg, final String transactionId, final String billOfEntry, final String salesInvoice, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String customerId, final String customerName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance) {
+        public Invoice(final Dialog dg, final String transactionId, final String billOfEntry, final String salesInvoice, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String customerId, final String customerName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance, final String field1, final String field2, final String remarks) {
             this.dg = dg;
             this.transactionId = transactionId;
             this.billOfEntry = billOfEntry;
@@ -60,6 +63,9 @@ public class Invoice {
             this.paymentDate = paymentDate;
             this.balance = balance;
             this.cumulativeBalance = cumulativeBalance;
+            this.field1 = field1;
+            this.field2 = field2;
+            this.remarks = remarks;
     }
 
 //    public String getName() {

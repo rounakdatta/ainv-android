@@ -1,7 +1,9 @@
 package com.asslpl.ainv;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
@@ -106,6 +108,13 @@ public class Transaction extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (resultCode == Activity.RESULT_OK) {
+                // OK!
+                finish();
+            }
+    }
 
     public List<String> getItemInventory(View view, String warehouseId, String itemId, String clientId) {
 
@@ -265,7 +274,6 @@ public class Transaction extends AppCompatActivity {
         String transactionURL = testEndpoint + "/api/put/transaction/";
 
         String plusOrMinus = fe5p1.getText().toString();
-        String transactionResponse= "NULL";
 
         if (plusOrMinus.equals("-")) {
             plusOrMinus = "out";
@@ -276,31 +284,12 @@ public class Transaction extends AppCompatActivity {
         String data = "oldOrNew=" + fe8p1.getText() + "&billRef=" + fe7p1.getText() + "&trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&customerId=" + fe10p3.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
         Log.e("postingData", data);
 
-        HttpPostRequest insertHttp = new HttpPostRequest();
-        try {
-            transactionResponse = insertHttp.execute(transactionURL, data).get();
-            JSONObject transactionResponseJson = new JSONObject(transactionResponse);
-
-            Toast toast;
-
-            if (transactionResponseJson.getBoolean("success")) {
-                toast = Toast.makeText(getApplicationContext(), "Transaction successful!", Toast.LENGTH_LONG);
-
-                // finish this activity upon successful completion
-                finish();
-            } else {
-                toast = Toast.makeText(getApplicationContext(), "Transaction error!", Toast.LENGTH_LONG);
-            }
-
-            toast.show();
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // finish this activity upon successful completion
+        // that is, move on the final page
+        Intent ultimateTransactionPage = new Intent(getApplicationContext(), ultimate_transaction.class);
+        ultimateTransactionPage.putExtra("requestData", data);
+        ultimateTransactionPage.putExtra("direction", plusOrMinus);
+        startActivityForResult(ultimateTransactionPage, 1234);
     }
 
     public static int getWidth(Context context) {

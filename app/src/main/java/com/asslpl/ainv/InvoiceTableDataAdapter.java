@@ -83,6 +83,15 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
             case 14:
                 renderedView = renderExpectedPaymentDate(inv, rowIndex);
                 break;
+            case 15:
+                renderedView = renderField1(inv);
+                break;
+            case 16:
+                renderedView = renderField2(inv);
+                break;
+            case 17:
+                renderedView = renderRemarks(inv);
+                break;
         }
 
         return renderedView;
@@ -149,6 +158,18 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
 
     private View renderExpectedPaymentDate(final Invoice inv, final int rowIndex) {
         return renderUpdatableDate(inv, inv.paymentDate, Integer.parseInt(inv.transactionId));
+    }
+
+    private View renderField1(final Invoice inv) {
+        return renderString(inv.field1);
+    }
+
+    private View renderField2(final Invoice inv) {
+        return renderString(inv.field2);
+    }
+
+    private View renderRemarks(final Invoice inv) {
+        return renderString(inv.remarks);
     }
 
     private View renderUpdatablePayment(final String value, final int rowIndex, final String totalPayVal) {
