@@ -50,10 +50,10 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
             case 3:
                 renderedView = renderItem(inv);
                 break;
-            case 4:
+            case 5:
                 renderedView = renderWarehouse(inv);
                 break;
-            case 5:
+            case 4:
                 renderedView = renderClient(inv);
                 break;
             case 6:
@@ -148,7 +148,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
     }
 
     private View renderExpectedPaymentDate(final Invoice inv, final int rowIndex) {
-        return renderUpdatableDate(inv.paymentDate, Integer.parseInt(inv.transactionId));
+        return renderUpdatableDate(inv, inv.paymentDate, Integer.parseInt(inv.transactionId));
     }
 
     private View renderUpdatablePayment(final String value, final int rowIndex, final String totalPayVal) {
@@ -249,12 +249,14 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
         return textView;
     }
 
-    private View renderUpdatableDate(final String value, final int rowIndex) {
+    private View renderUpdatableDate(final Invoice inv, final String value, final int rowIndex) {
         final TextView textView = new TextView(getContext());
         textView.setText(value);
         textView.setId(rowIndex + 999);
         textView.setPadding(20, 10, 20, 10);
         textView.setTextSize(15);
+
+        System.out.println(textView.getId());
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,6 +278,8 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
 
                         DialogFragment newFragment = new SelectDateFragment();
                         ((SelectDateFragment) newFragment).setValue(rowIndex);
+                        ((SelectDateFragment) newFragment).setDialogIndicator(inv.dg);
+                        System.out.println(dialog);
                         newFragment.show(this.getFragmentManager(), "Date Picker");
                     }
 

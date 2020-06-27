@@ -19,9 +19,14 @@ import java.util.concurrent.ExecutionException;
 public class  SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     int whichRowItis;
+    Dialog dg;
 
     public void setValue(int x) {
         this.whichRowItis = x;
+    }
+
+    public void setDialogIndicator(Dialog d) {
+        this.dg = d;
     }
 
     @Override
@@ -57,7 +62,10 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
 
             } catch (Exception e1) {
                 System.out.println(e1);
-                TextView dt = getActivity().findViewById(this.whichRowItis + 999);
+
+                System.out.println(dg);
+
+                TextView dt = dg.findViewById(this.whichRowItis + 999);
                 String settingDate = day + "/" + month + "/" + year;
 
 //                Calendar received = Calendar.getInstance();
@@ -71,6 +79,8 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
 //                    toast.show();
 //                    return;
 //                }
+
+                System.out.println(whichRowItis);
 
                 dt.setText(settingDate);
 

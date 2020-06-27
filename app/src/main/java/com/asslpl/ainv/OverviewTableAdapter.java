@@ -129,7 +129,8 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
     }
 
     private View renderTotalPayment(final Overview inv) {
-        return renderPaymentAmountColumn(inv, inv.totalValue, Double.parseDouble(inv.totalValue));
+        return renderString(inv, inv.totalValue);
+        // return renderPaymentAmountColumn(inv, inv.totalValue, Double.parseDouble(inv.totalValue));
     }
 
     private View renderBalance(final Overview inv) {
@@ -179,12 +180,13 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
                 List<Invoice> headerData = new ArrayList<>();
 
                 String requestedBillOfEntry = inv.billOfEntryId;
+                String requestedDirection = inv.direction;
 
-                String[] TABLE_HEADERS = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Warehouse", "Client Name", "Customer Name", "Change in Stock", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date" };
+                String[] TABLE_HEADERS = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date" };
 
                 String testEndpoint = getResources().getString(R.string.serverEndpoint);
                 String searchURL = testEndpoint + "/api/search/sales/";
-                String searchRequests = "billOfEntry=" + requestedBillOfEntry + "&clientId=" + "all" + "&customerId=" + "all" + "&filter=" + "in";
+                String searchRequests = "billOfEntry=" + requestedBillOfEntry + "&clientId=" + "all" + "&customerId=" + "all" + "&filter=" + requestedDirection;
 
                 System.out.println(searchRequests);
 
@@ -209,7 +211,7 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
                             cumulativeBalance += balanceValue;
                         }
 
-                        Invoice foo = new Invoice(salesTicket.getString("transactionId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoice"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("customerId"), salesTicket.getString("customerName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), salesTicket.getString("paymentDate"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance));
+                        Invoice foo = new Invoice(dialog, salesTicket.getString("transactionId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoice"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("customerId"), salesTicket.getString("customerName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), salesTicket.getString("paymentDate"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance));
                         dataToShow.add(foo);
                     }
 

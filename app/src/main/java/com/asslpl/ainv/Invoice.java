@@ -1,5 +1,7 @@
 package com.asslpl.ainv;
 
+import android.app.Dialog;
+
 public class Invoice {
 
     public String transactionId;
@@ -29,7 +31,10 @@ public class Invoice {
     public String balance;
     public String cumulativeBalance;
 
-        public Invoice(final String transactionId, final String billOfEntry, final String salesInvoice, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String customerId, final String customerName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance) {
+    Dialog dg;
+
+        public Invoice(final Dialog dg, final String transactionId, final String billOfEntry, final String salesInvoice, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String customerId, final String customerName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance) {
+            this.dg = dg;
             this.transactionId = transactionId;
             this.billOfEntry = billOfEntry;
             this.salesInvoice = salesInvoice;
