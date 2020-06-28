@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
@@ -74,6 +75,8 @@ public class Transaction extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -182,6 +185,16 @@ public class Transaction extends AppCompatActivity {
                 movementBlocker.show();
                 return;
             }
+
+            EditText transactionText = mViewPager.getRootView().findViewById(R.id.billOfEntry);
+            EditText dateText = mViewPager.getRootView().findViewById(R.id.entryDateHeader);
+
+            if (transactionText.getText().length() == 0 || dateText.getText().length() == 0) {
+                Toast movementBlocker = Toast.makeText(getApplicationContext(), "Data needs to be filled up correctly!", Toast.LENGTH_SHORT);
+                movementBlocker.show();
+                return;
+            }
+
         } catch (Exception e) {
             System.out.println("Falling back");
         }
@@ -357,9 +370,14 @@ public class Transaction extends AppCompatActivity {
         String totalPcsCount = String.valueOf(totalPcs.getText());
 
         TextView totalValueSecond = mViewPager.getRootView().findViewById(R.id.finalValue);
-        if (Double.parseDouble(totalValueSecond.getText().toString()) < 0) {
-            Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Number of items cannot be negative!", Toast.LENGTH_LONG);
-            negativeValueBlocker.show();
+
+        try {
+            if (Double.parseDouble(totalValueSecond.getText().toString()) < 0) {
+                Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Number of items cannot be negative!", Toast.LENGTH_LONG);
+                negativeValueBlocker.show();
+                return;
+            }
+        } catch(Exception e) {
             return;
         }
 

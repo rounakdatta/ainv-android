@@ -181,13 +181,15 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
 
                 String requestedBillOfEntry = inv.billOfEntryId;
                 String requestedDirection = inv.direction;
+                String requestedClientId = inv.search_clientId;
+                String requestedCustomerId = inv.search_customerId;
 
                 String[] TABLE_HEADERS_IN = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "CFS Delv. Date", "Client Delv. Date", "Remarks" };
                 String[] TABLE_HEADERS_OUT = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "Serv. Inv. Ack. Date", "Sale Inv. Ack. Date", "Remarks" };
 
                 String testEndpoint = getResources().getString(R.string.serverEndpoint);
                 String searchURL = testEndpoint + "/api/search/sales/";
-                String searchRequests = "billOfEntry=" + requestedBillOfEntry + "&clientId=" + "all" + "&customerId=" + "all" + "&filter=" + requestedDirection;
+                String searchRequests = "billOfEntry=" + requestedBillOfEntry + "&clientId=" + requestedClientId + "&customerId=" + requestedCustomerId + "&filter=" + requestedDirection;
 
                 System.out.println(searchRequests);
 

@@ -20,6 +20,7 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
 
     int whichRowItis;
     Dialog dg;
+    String columnToUpdate;
 
     public void setValue(int x) {
         this.whichRowItis = x;
@@ -27,6 +28,10 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
 
     public void setDialogIndicator(Dialog d) {
         this.dg = d;
+    }
+
+    public void setWhichColumnUpdater(String column) {
+        this.columnToUpdate = column;
     }
 
     @Override
@@ -63,33 +68,17 @@ public class  SelectDateFragment extends DialogFragment implements DatePickerDia
             } catch (Exception e1) {
                 System.out.println(e1);
 
-                System.out.println(dg);
-
                 TextView dt = dg.findViewById(this.whichRowItis + 999);
                 String settingDate = day + "/" + month + "/" + year;
-
-//                Calendar received = Calendar.getInstance();
-//                received.set(year, month, day);
-//                Calendar today = Calendar.getInstance();
-//                today.set(Calendar.YEAR, Calendar.MONTH, Calendar.DATE);
-//                System.out.println(received.toString());
-//                System.out.println(today.toString());
-//                if (received.before(today)) {
-//                    Toast toast = Toast.makeText(getContext(), "Date must not be before today!", Toast.LENGTH_LONG);
-//                    toast.show();
-//                    return;
-//                }
-
-                System.out.println(whichRowItis);
 
                 dt.setText(settingDate);
 
                 // send the data to server
                 String testEndpoint = getResources().getString(R.string.serverEndpoint);
-                String updateURL = testEndpoint + "/api/update/paymentdate/";
+                String updateURL = testEndpoint + "/api/update/" + columnToUpdate + "/";
                 String updateResponse = "NULL";
 
-                String data = "transactionId=" + this.whichRowItis + "&paymentDate=" + settingDate;
+                String data = "transactionId=" + this.whichRowItis + "&" + columnToUpdate + "=" + settingDate;
                 HttpPostRequest insertHttp = new HttpPostRequest();
                 try {
                     updateResponse = insertHttp.execute(updateURL, data).get();

@@ -57,7 +57,7 @@ public class view_sales extends AppCompatActivity {
                     cumulativeBalance += balanceValue;
                 }
 
-                Overview foo = new Overview(salesTicket.getString("billOfEntryId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoiceId"), salesTicket.getString("salesInvoice"), salesTicket.getString("direction"), salesTicket.getString("entryDate"), salesTicket.getString("item"), salesTicket.getString("warehouse"), salesTicket.getString("client"), salesTicket.getString("customer"), salesTicket.getString("bigQuantity"), salesTicket.getString("totalValue"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance), salesTicket.getString("date"));
+                Overview foo = new Overview(salesTicket.getString("billOfEntryId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoiceId"), salesTicket.getString("salesInvoice"), salesTicket.getString("direction"), salesTicket.getString("entryDate"), salesTicket.getString("item"), salesTicket.getString("warehouse"), salesTicket.getString("client"), salesTicket.getString("customer"), salesTicket.getString("bigQuantity"), salesTicket.getString("totalValue"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance), salesTicket.getString("date"), invoiceNumber, clientId, customerId);
                 dataToShow.add(foo);
             }
 

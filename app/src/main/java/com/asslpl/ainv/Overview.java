@@ -19,7 +19,12 @@ public class Overview {
     public String cumulativeBalance;
     public String date;
 
-    public Overview(final String billOfEntryId, final String billOfEntry, final String salesInvoiceId, final String salesInvoice, final String direction, final String entryDate, final String item, final String warehouse, final String client, final String customer, final String bigQuantity, final String totalValue, final String isPaid, final String paidAmount, final String balance, final String cumulativeBalance, final String date) {
+    // search query attributes
+    public String search_invoiceNumber;
+    public String search_clientId;
+    public String search_customerId;
+
+    public Overview(final String billOfEntryId, final String billOfEntry, final String salesInvoiceId, final String salesInvoice, final String direction, final String entryDate, final String item, final String warehouse, final String client, final String customer, final String bigQuantity, final String totalValue, final String isPaid, final String paidAmount, final String balance, final String cumulativeBalance, final String date, final String search_invoiceNumber, final String search_clientId, final String search_customerId) {
         this.billOfEntryId = billOfEntryId;
         this.billOfEntry = billOfEntry;
         this.salesInvoiceId = salesInvoiceId;
@@ -37,6 +42,10 @@ public class Overview {
         this.balance = balance;
         this.cumulativeBalance = cumulativeBalance;
         this.date = date;
+
+        this.search_invoiceNumber = search_invoiceNumber;
+        this.search_clientId = search_clientId;
+        this.search_customerId = search_customerId;
     }
 
 }
