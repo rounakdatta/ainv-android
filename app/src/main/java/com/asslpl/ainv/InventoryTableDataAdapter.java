@@ -37,13 +37,13 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
                 renderedView = renderHsnCode(inv);
                 break;
             case 3:
-                renderedView = renderBigcartonQuantity(inv);
+                renderedView = renderItemQuantity(inv);
                 break;
             case 4:
                 renderedView = renderSmallboxQuantity(inv);
                 break;
             case 5:
-                renderedView = renderItemQuantity(inv);
+                renderedView = renderBigcartonQuantity(inv);
                 break;
             case 6:
                 renderedView = renderWarehouseName(inv);
@@ -65,16 +65,16 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
         return renderString(inv.hsnCode);
     }
 
-    private View renderItemQuantity(final Inventory inv) {
-        return renderString(inv.itemQuantity + " " + inv.uomBig);
+    private View renderBigcartonQuantity(final Inventory inv) {
+        return renderString(inv.bigcartonQuantity + " " + inv.uomBig);
     }
 
     private View renderSmallboxQuantity(final Inventory inv) {
         return renderString(inv.smallboxQuantity + " " + inv.uomSmall);
     }
 
-    private View renderBigcartonQuantity(final Inventory inv) {
-        return renderString(inv.bigcartonQuantity + " " + inv.uomRaw);
+    private View renderItemQuantity(final Inventory inv) {
+        return renderString(inv.itemQuantity + " " + inv.uomRaw);
     }
 
     private View renderWarehouseName(final Inventory inv) {
