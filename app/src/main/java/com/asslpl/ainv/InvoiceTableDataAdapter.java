@@ -46,16 +46,16 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
             case 2:
                 renderedView = renderEntryDate(inv);
                 break;
-            case 3:
+            case 6:
                 renderedView = renderItem(inv);
                 break;
-            case 5:
+            case 4:
                 renderedView = renderWarehouse(inv);
                 break;
-            case 4:
+            case 3:
                 renderedView = renderClient(inv);
                 break;
-            case 6:
+            case 5:
                 renderedView = renderCustomer(inv);
                 break;
             case 7:

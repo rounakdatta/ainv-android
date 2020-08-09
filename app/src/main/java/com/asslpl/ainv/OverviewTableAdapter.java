@@ -42,19 +42,19 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
         View renderedView = null;
 
         switch (columnIndex) {
-            case 1:
+            case 0:
                 renderedView = renderDirection(inv);
                 break;
-            case 2:
+            case 1:
                 renderedView = renderBillOfEntry(inv);
                 break;
-            case 3:
+            case 2:
                 renderedView = renderSalesInvoice(inv);
                 break;
-            case 4:
+            case 3:
                 renderedView = renderEntryDate(inv);
                 break;
-            case 0:
+            case 4:
                 renderedView = renderItem(inv);
                 break;
             case 6:
@@ -184,8 +184,8 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
                 String requestedClientId = inv.search_clientId;
                 String requestedCustomerId = inv.search_customerId;
 
-                String[] TABLE_HEADERS_IN = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "CFS Delv. Date", "Client Delv. Date", "Remarks" };
-                String[] TABLE_HEADERS_OUT = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Item", "Client Name", "Warehouse", "Customer Name", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "Serv. Inv. Ack. Date", "Sale Inv. Ack. Date", "Remarks" };
+                String[] TABLE_HEADERS_IN = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Client Name", "Warehouse", "Customer Name", "Item", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "CFS Delv. Date", "Client Delv. Date", "Remarks" };
+                String[] TABLE_HEADERS_OUT = { "Bill Of Entry", "Sales Invoice No.", "Entry Date", "Client Name", "Warehouse", "Customer Name", "Item", "Carton IN/OUT", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date", "Serv. Inv. Ack. Date", "Sale Inv. Ack. Date", "Remarks" };
 
                 String testEndpoint = getResources().getString(R.string.serverEndpoint);
                 String searchURL = testEndpoint + "/api/search/sales/";
