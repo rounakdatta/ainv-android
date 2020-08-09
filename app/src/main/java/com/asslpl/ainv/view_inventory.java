@@ -22,7 +22,7 @@ public class view_inventory extends AppCompatActivity {
     private List<Inventory> dataToShow = new ArrayList<>();
     private List<Inventory> headerData = new ArrayList<>();
 
-    private static final String[] TABLE_HEADERS = { "Client Name", "Item Description", "Item Variant Description", "HSN Code", "Big Carton Quantity", "UoM", "Small Box Quantity", "UoM", "Item Variant Quantity", "UoM", "Warehouse Name"};
+    private static final String[] TABLE_HEADERS = { "Client Name", "Item Description", "Item Variant Description", "Big Carton Quantity", "Small Box Quantity", "Item Variant Quantity", "Warehouse Name", "HSN Code"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

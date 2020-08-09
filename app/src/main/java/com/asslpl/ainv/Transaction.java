@@ -1,10 +1,10 @@
 package com.asslpl.ainv;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
@@ -17,42 +17,38 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.view.ViewParent;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static java.util.Arrays.asList;
 
 public class Transaction extends AppCompatActivity {
 
@@ -79,6 +75,8 @@ public class Transaction extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -113,6 +111,13 @@ public class Transaction extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (resultCode == Activity.RESULT_OK) {
+                // OK!
+                finish();
+            }
+    }
 
     public List<String> getItemInventory(View view, String warehouseId, String itemId, String clientId) {
 
@@ -152,7 +157,7 @@ public class Transaction extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return Arrays.asList(rawPerSmall, smallPerBig, cartonQuantity);
+        return asList(rawPerSmall, smallPerBig, cartonQuantity);
 
     }
 
@@ -165,12 +170,31 @@ public class Transaction extends AppCompatActivity {
         TextView comeOrGoTv = mViewPager.getRootView().findViewById(R.id.comeOrGo);
         EditText clientTv = mViewPager.getRootView().findViewById(R.id.clientId);
 
+        String oldCustomerDetails = "XX";
+
+        try {
+            TextView oldOrNew = mViewPager.getRootView().findViewById(R.id.oldCustomerId);
+            oldCustomerDetails = oldOrNew.getText().toString();
+        } catch(Exception e) {
+            System.out.println("Never mind");
+        }
+
         try {
             if (comeOrGoTv.getText().equals("X")) {
                 Toast movementBlocker = Toast.makeText(getApplicationContext(), "Incoming / Outgoing Not Selected!", Toast.LENGTH_SHORT);
                 movementBlocker.show();
                 return;
             }
+
+            EditText transactionText = mViewPager.getRootView().findViewById(R.id.billOfEntry);
+            EditText dateText = mViewPager.getRootView().findViewById(R.id.entryDateHeader);
+
+            if (transactionText.getText().length() == 0 || dateText.getText().length() == 0) {
+                Toast movementBlocker = Toast.makeText(getApplicationContext(), "Data needs to be filled up correctly!", Toast.LENGTH_SHORT);
+                movementBlocker.show();
+                return;
+            }
+
         } catch (Exception e) {
             System.out.println("Falling back");
         }
@@ -187,6 +211,10 @@ public class Transaction extends AppCompatActivity {
             TextView comeOrGoThirdPageTv = mViewPager.getRootView().findViewById(R.id.comeOrGoThird);
             comeOrGoThirdPageTv.setText(comeOrGoTv.getText());
 
+            TextView custIdThirdPage = mViewPager.getRootView().findViewById(R.id.custid);
+            custIdThirdPage.setText(oldCustomerDetails);
+            System.out.println("Correctly set the thid page text" + custIdThirdPage.getText());
+
             mViewPager.setCurrentItem(1);
             TextView currentTv = mViewPager.getRootView().findViewById(R.id.currentValue);
             currentTv.setText(response.get(2));
@@ -201,6 +229,7 @@ public class Transaction extends AppCompatActivity {
             comeOrGoSecondPageTv.setText(comeOrGoTv.getText());
 
         } catch (Exception e) {
+            System.out.println(e);
             mViewPager.setCurrentItem(1);
         }
     }
@@ -220,6 +249,8 @@ public class Transaction extends AppCompatActivity {
         TextView fe4p1 = mViewPager.getRootView().findViewById(R.id.warehouseId);
         TextView fe5p1 = mViewPager.getRootView().findViewById(R.id.comeOrGo);
         TextView fe6p1 = mViewPager.getRootView().findViewById(R.id.clientId);
+        EditText fe7p1 = mViewPager.getRootView().findViewById(R.id.billRef);
+        TextView fe8p1 = mViewPager.getRootView().findViewById(R.id.oldOrNew);
 
         // picking values from the second page
         mViewPager.setCurrentItem(1);
@@ -256,7 +287,6 @@ public class Transaction extends AppCompatActivity {
         String transactionURL = testEndpoint + "/api/put/transaction/";
 
         String plusOrMinus = fe5p1.getText().toString();
-        String transactionResponse= "NULL";
 
         if (plusOrMinus.equals("-")) {
             plusOrMinus = "out";
@@ -264,34 +294,15 @@ public class Transaction extends AppCompatActivity {
             plusOrMinus = "in";
         }
 
-        String data = "trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&customerId=" + fe10p3.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
+        String data = "oldOrNew=" + fe8p1.getText() + "&billRef=" + fe7p1.getText() + "&trackingNumber=" + fe1p1.getText() + "&entryDate=" + fe2p1.getText() + "&itemId=" + fe3p1.getText() + "&warehouseId=" + fe4p1.getText() + "&comeOrGo=" + plusOrMinus +"&clientId=" + fe6p1.getText() + "&customerId=" + fe10p3.getText() + "&bigQuantity=" + fe1p2.getText() +"&currentValue=" + fe2p2.getText() + "&changeValue=" + fe3p2.getText() +"&finalValue=" + fe4p2.getText() + "&secretRate1=" + fe5p2.getText() +"&secretRate2=" + fe6p2.getText() + "&totalPcs=" + fe7p2.getText() +"&assdValue=" + fe1p3.getText() + "&dutyValue=" + fe2p3.getText() +"&gstValue=" + fe3p3.getText() + "&totalValue=" + fe4p3.getText() +"&valuePerPiece=" + fe5p3.getText() + "&totalPieces=" + fe6p3.getText() +"&isPaid=" + fe7p3.isChecked() + "&paidAmount=" + fe9p3.getText() + "&date=" + fe8p3.getText();
         Log.e("postingData", data);
 
-        HttpPostRequest insertHttp = new HttpPostRequest();
-        try {
-            transactionResponse = insertHttp.execute(transactionURL, data).get();
-            JSONObject transactionResponseJson = new JSONObject(transactionResponse);
-
-            Toast toast;
-
-            if (transactionResponseJson.getBoolean("success")) {
-                toast = Toast.makeText(getApplicationContext(), "Transaction successful!", Toast.LENGTH_LONG);
-
-                // finish this activity upon successful completion
-                finish();
-            } else {
-                toast = Toast.makeText(getApplicationContext(), "Transaction error!", Toast.LENGTH_LONG);
-            }
-
-            toast.show();
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // finish this activity upon successful completion
+        // that is, move on the final page
+        Intent ultimateTransactionPage = new Intent(getApplicationContext(), ultimate_transaction.class);
+        ultimateTransactionPage.putExtra("requestData", data);
+        ultimateTransactionPage.putExtra("direction", plusOrMinus);
+        startActivityForResult(ultimateTransactionPage, 1234);
     }
 
     public static int getWidth(Context context) {
@@ -299,6 +310,17 @@ public class Transaction extends AppCompatActivity {
         WindowManager windowmanager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         windowmanager.getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.widthPixels;
+    }
+
+    //private method of your class
+    private int getIndex(Spinner spinner, String myString){
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     public void selectNewRates(View view) {
@@ -347,6 +369,18 @@ public class Transaction extends AppCompatActivity {
         TextView totalPcs = mViewPager.getRootView().findViewById(R.id.totalPcs);
         String totalPcsCount = String.valueOf(totalPcs.getText());
 
+        TextView totalValueSecond = mViewPager.getRootView().findViewById(R.id.finalValue);
+
+        try {
+            if (Double.parseDouble(totalValueSecond.getText().toString()) < 0) {
+                Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Number of items cannot be negative!", Toast.LENGTH_LONG);
+                negativeValueBlocker.show();
+                return;
+            }
+        } catch(Exception e) {
+            return;
+        }
+
         mViewPager.setCurrentItem(2);
 
         TextView totalPieces = mViewPager.getRootView().findViewById(R.id.totalPieces);
@@ -367,6 +401,8 @@ public class Transaction extends AppCompatActivity {
         Spinner customerSelector = mViewPager.getRootView().findViewById(R.id.customerSelection);
         TextView customerSelectorHeader = mViewPager.getRootView().findViewById(R.id.customerHeader);
         TextView custId = mViewPager.getRootView().findViewById(R.id.custid);
+
+        System.out.println("Checking if correctly set " + custId.getText());
 
         final EditText totalValue = mViewPager.getRootView().findViewById(R.id.totalValue);
         final EditText paidAmount = mViewPager.getRootView().findViewById(R.id.paidAmount);
@@ -401,7 +437,34 @@ public class Transaction extends AppCompatActivity {
             assdValue.setVisibility(View.INVISIBLE);
 
             TextView dutyValueHeader = mViewPager.getRootView().findViewById(R.id.dutyValueHeader);
-            dutyValueHeader.setText("Material Value");
+            dutyValueHeader.setText("Sale / Serv. Inv. Basic Value");
+
+
+            // correctly set the customer auto selections
+            try {
+                String customerTvOld = custId.getText().toString();
+                if (!customerTvOld.equals("-1")) {
+                    String[] oldCustomerDetails = customerTvOld.split("\\$");
+
+                    System.out.println(Arrays.toString(oldCustomerDetails));
+                    String oldCustId = oldCustomerDetails[0];
+                    String oldCustName = oldCustomerDetails[1];
+
+                    System.out.println(oldCustId);
+                    System.out.println(oldCustName);
+
+                    custId.setText(oldCustId);
+
+                    customerSelector.setSelection(getIndex(customerSelector, oldCustName));
+
+                    customerSelector.setEnabled(false);
+
+                } else {
+                    custId.setText("XX");
+                    customerSelector.setEnabled(true);
+                }
+            } catch (Exception e) {
+            }
         }
 
         // update the values on page start
@@ -481,7 +544,7 @@ public class Transaction extends AppCompatActivity {
         String ITEMID = "-1";
         String WAREHOUSEID = "-1";
         String CLIENTID = "-1";
-        String CUSTID = "-1";
+        String CUSTID = "50";
 
         View rootView;
 
@@ -513,6 +576,16 @@ public class Transaction extends AppCompatActivity {
 
         TextView billOrSalesHeader;
         EditText billOrSalesText;
+
+        TextView billSelectorHeader;
+        Spinner billSelector;
+        AutoCompleteTextView invSelector;
+        EditText billRef;
+
+        EditText entryDateHeader;
+        Button entryDate;
+
+        TextView oldOrNew;
 
         float totalPiecesP3;
 
@@ -557,6 +630,19 @@ public class Transaction extends AppCompatActivity {
                 billOrSalesHeader = rootView.findViewById(R.id.billOfEntryHeader);
                 billOrSalesText = rootView.findViewById(R.id.billOfEntry);
 
+                billSelectorHeader = rootView.findViewById(R.id.beSelectorHeader);
+                billSelector = rootView.findViewById(R.id.beSelector);
+                billRef = rootView.findViewById(R.id.billRef);
+                billRef.setText("N/A");
+
+                invSelector = rootView.findViewById(R.id.billOfEntry);
+                final TextWatcher[] invTw = new TextWatcher[1];
+
+                entryDateHeader = rootView.findViewById(R.id.entryDateHeader);
+                entryDate = rootView.findViewById(R.id.entryDate);
+
+                oldOrNew = rootView.findViewById(R.id.oldOrNew);
+
                 entryExitSelector.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -566,10 +652,242 @@ public class Transaction extends AppCompatActivity {
                             comeOrGo.setText("+");
                             billOrSalesHeader.setText("Bill of Entry");
                             billOrSalesText.setHint("Bill of Entry Number");
+
+                            billSelectorHeader.setVisibility(View.INVISIBLE);
+                            billSelector.setVisibility(View.INVISIBLE);
+                            billRef.setText("N/A");
+
+                            if (invTw[0] != null) {
+                                invSelector.removeTextChangedListener(invTw[0]);
+                                invSelector.setAdapter(null);
+                            }
+                            invSelector.setText("");
+                            entryDateHeader.setText("");
+                            entryDate.setEnabled(true);
+                            oldOrNew.setEnabled(false);
+
+                            String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                            final String billDataURL = testEndpoint + "/api/get/all/bills/";
+
+                            JSONArray allBillArray;
+                            final ArrayList<Object> billIds = new ArrayList<>();
+                            final ArrayList<Object> billDates = new ArrayList<>();
+                            final ArrayList<String> billNums = new ArrayList<>();
+                            final HashMap<String, String> billDatesMapper = new HashMap<String, String>();
+
+                            HttpGetRequest billGetter = new HttpGetRequest();
+                            try {
+                                String allBills = billGetter.execute(billDataURL).get();
+                                allBillArray = new JSONArray(allBills);
+
+                                for (int i = 0; i < allBillArray.length(); i++) {
+                                    billNums.add(allBillArray.getJSONObject(i).getString("billOfEntryNumber"));
+                                    billIds.add(allBillArray.getJSONObject(i).getString("billOfEntryId"));
+                                    billDates.add(allBillArray.getJSONObject(i).getString("billOfEntryDate"));
+
+                                    billDatesMapper.put(allBillArray.getJSONObject(i).getString("billOfEntryNumber"), allBillArray.getJSONObject(i).getString("billOfEntryId"));
+                                }
+
+                                ArrayAdapter<String> billSelectorAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, billNums);
+                                billSelectorAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+                                invSelector.setThreshold(0);
+                                invSelector.setAdapter(billSelectorAdapter);
+
+                            } catch(Exception e) {
+                                System.out.println(e);
+
+                                Context context = rootView.getContext();
+                                Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+                                toast.show();
+
+                                return;
+                            }
+
+                            invTw[0] = new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                }
+
+                                @Override
+                                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable editable) {
+                                    String writtenBillNumber = editable.toString();
+                                    if (billDatesMapper.containsKey(writtenBillNumber)) {
+                                        String billId = billDatesMapper.get(writtenBillNumber);
+                                        int billIdIndex = billIds.indexOf(billId);
+
+                                        String invoiceDate = (String) billDates.get(billIdIndex);
+
+                                        entryDateHeader.setText(invoiceDate);
+                                        entryDate.setEnabled(false);
+                                        oldOrNew.setVisibility(View.INVISIBLE);
+                                        oldOrNew.setText(billId);
+                                    } else {
+                                        entryDateHeader.setText("");
+                                        entryDate.setEnabled(true);
+                                        oldOrNew.setText("New!");
+                                        oldOrNew.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            };
+
+                            invSelector.addTextChangedListener(invTw[0]);
+
+                            // ----------------- IF OUTGOING RADIO IS CHECKED -----------------------
                         } else if (R.id.outgoingRadio == checkedId) {
                             comeOrGo.setText("-");
                             billOrSalesHeader.setText("Sales Invoice");
                             billOrSalesText.setHint("Sales Invoice Number");
+
+                            billSelectorHeader.setVisibility(View.VISIBLE);
+                            billRef.setText("");
+                            billSelector.setVisibility(View.VISIBLE);
+
+                            if (invTw[0] != null) {
+                                invSelector.removeTextChangedListener(invTw[0]);
+                                invSelector.setAdapter(null);
+                            }
+                            invSelector.setText("");
+                            entryDateHeader.setText("");
+                            entryDate.setEnabled(true);
+                            oldOrNew.setEnabled(false);
+
+                            String testEndpoint = getResources().getString(R.string.serverEndpoint);
+                            String billDataURL = testEndpoint + "/api/get/all/bills/";
+
+                            JSONArray allBillsArray;
+                            final ArrayList<Object> billIds = new ArrayList<>();
+
+                            HttpGetRequest billGetter = new HttpGetRequest();
+                            try {
+                                String allBills = billGetter.execute(billDataURL).get();
+                                allBillsArray = new JSONArray(allBills);
+                                ArrayList<String> billNums = new ArrayList<>();
+
+                                for (int i = 0; i < allBillsArray.length(); i++) {
+                                    billNums.add(allBillsArray.getJSONObject(i).getString("billOfEntryNumber"));
+                                    billIds.add(allBillsArray.getJSONObject(i).getString("billOfEntryId"));
+                                }
+
+                                ArrayAdapter<String> billSelectorAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, billNums);
+                                billSelectorAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                                billSelector.setAdapter(billSelectorAdapter);
+
+                            } catch(Exception e) {
+                                System.out.println(e);
+
+                                Context context = rootView.getContext();
+                                Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+                                toast.show();
+
+                                return;
+                            }
+
+                            billSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                    billRef.setText(billIds.get(i).toString());
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                }
+                            });
+
+                            final String invDataURL = testEndpoint + "/api/get/all/invoices/";
+
+                            JSONArray allInvArray;
+                            final ArrayList<Object> invIds = new ArrayList<>();
+                            final ArrayList<Object> invDates = new ArrayList<>();
+                            final ArrayList<String> invNums = new ArrayList<>();
+
+                            final ArrayList<String> invCustId = new ArrayList<>();
+                            final ArrayList<String> invCustName = new ArrayList<>();
+
+                            final HashMap<String, String> invDatesMapper = new HashMap<String, String>();
+
+                            HttpGetRequest invGetter = new HttpGetRequest();
+                            try {
+                                String allInvs = invGetter.execute(invDataURL).get();
+                                allInvArray = new JSONArray(allInvs);
+
+                                for (int i = 0; i < allInvArray.length(); i++) {
+                                    invNums.add(allInvArray.getJSONObject(i).getString("salesInvoiceNumber"));
+                                    invIds.add(allInvArray.getJSONObject(i).getString("salesInvoiceId"));
+                                    invDates.add(allInvArray.getJSONObject(i).getString("salesInvoiceDate"));
+
+                                    invCustId.add(allInvArray.getJSONObject(i).getString("customerId"));
+                                    invCustName.add(allInvArray.getJSONObject(i).getString("customerName"));
+
+                                    invDatesMapper.put(allInvArray.getJSONObject(i).getString("salesInvoiceNumber"), allInvArray.getJSONObject(i).getString("salesInvoiceId"));
+                                }
+
+                                ArrayAdapter<String> invSelectorAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, invNums);
+                                invSelectorAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+                                invSelector.setThreshold(0);
+                                invSelector.setAdapter(invSelectorAdapter);
+
+                            } catch(Exception e) {
+                                System.out.println(e);
+
+                                Context context = rootView.getContext();
+                                Toast toast = Toast.makeText(context, "Error fetching data!", Toast.LENGTH_SHORT);
+                                toast.show();
+
+                                return;
+                            }
+
+                            invTw[0] = new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                }
+
+                                @Override
+                                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable editable) {
+                                    String writtenInvoiceNumber = editable.toString();
+                                    if (invDatesMapper.containsKey(writtenInvoiceNumber)) {
+                                        String invoiceId = invDatesMapper.get(writtenInvoiceNumber);
+                                        int invoiceIdIndex = invIds.indexOf(invoiceId);
+
+                                        String invoiceDate = (String) invDates.get(invoiceIdIndex);
+
+                                        entryDateHeader.setText(invoiceDate);
+                                        entryDate.setEnabled(false);
+                                        oldOrNew.setVisibility(View.INVISIBLE);
+                                        oldOrNew.setText(invoiceId);
+
+                                        // set the old customer Id filed
+                                        TextView oldCustomerId = rootView.findViewById(R.id.oldCustomerId);
+                                        oldCustomerId.setText(invCustId.get(invoiceIdIndex) + "$" + invCustName.get(invoiceIdIndex));
+
+                                    } else {
+                                        entryDateHeader.setText("");
+                                        entryDate.setEnabled(true);
+                                        oldOrNew.setText("New!");
+                                        oldOrNew.setVisibility(View.VISIBLE);
+
+                                        // set the old customer Id filed
+                                        TextView oldCustomerId = rootView.findViewById(R.id.oldCustomerId);
+                                        oldCustomerId.setText("N/A");
+                                    }
+                                }
+                            };
+
+                            invSelector.addTextChangedListener(invTw[0]);
                         }
 
                     }
@@ -1095,6 +1413,9 @@ public class Transaction extends AppCompatActivity {
                 customerSelector = rootView.findViewById(R.id.customerSelection);
                 customerTv = rootView.findViewById(R.id.custid);
 
+                System.out.println(customerTv.getText());
+                System.out.println("---------");
+
                 String testEndpoint = getResources().getString(R.string.serverEndpoint);
                 String customerDataURL = testEndpoint + "/api/get/all/customers/";
                 HttpGetRequest customerGetter = new HttpGetRequest();
@@ -1113,9 +1434,15 @@ public class Transaction extends AppCompatActivity {
                     customerDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                     customerSelector.setAdapter(customerDisplayAdapter);
 
-                    // by default, the first warehouse will be selected
+                    // if custid has been set by first page, then set that
+                    // by default, the first customer will be selected
+
                     CUSTID = customerArray.getJSONObject(0).getString("customerId");
-                    customerTv.setText(CUSTID);
+                    String customerTvOld = customerTv.getText().toString();
+                    System.out.println(customerTvOld);
+                    if (customerTv.getText().toString().equals("XX")) {
+                            customerTv.setText(CUSTID);
+                    }
 
 
                 } catch (InterruptedException e) {
@@ -1133,7 +1460,9 @@ public class Transaction extends AppCompatActivity {
 
                         try {
                             CUSTID = customerArray.getJSONObject(position).getString("customerId");
-                            customerTv.setText(CUSTID);
+                            if (!customerTv.getText().toString().contains("$")) {
+                                customerTv.setText(CUSTID);
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();

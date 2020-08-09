@@ -20,10 +20,10 @@ import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 
 public class view_sales extends AppCompatActivity {
 
-    private List<Invoice> dataToShow = new ArrayList<>();
-    private List<Invoice> headerData = new ArrayList<>();
+    private List<Overview> dataToShow = new ArrayList<>();
+    private List<Overview> headerData = new ArrayList<>();
 
-    private static final String[] TABLE_HEADERS = { "Sales Invoice No.", "Entry Date", "Item", "Warehouse", "Client Name", "Customer Name", "Change in Stock", "Total Pieces", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cuml. Balance", "Expd. Pymt. Date" };
+    private static final String[] TABLE_HEADERS = { "In/Out", "BE / Pur. Inv.", "Sales Invoice", "In/Out Date", "Item", "Client", "Warehouse", "Customer", "Carton Quantity", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cum. Balance", "Expd. Pymt. Date" };
 
     public void retrieveData(String filter) {
         Intent intent = getIntent();
@@ -34,7 +34,7 @@ public class view_sales extends AppCompatActivity {
         String customerId = intent.getStringExtra("customerId");
 
         String testEndpoint = getResources().getString(R.string.serverEndpoint);
-        String searchURL = testEndpoint + "/api/search/sales/";
+        String searchURL = testEndpoint + "/api/search/overview/";
         String searchRequests = "salesInvoiceNumber=" + invoiceNumber + "&clientId=" + clientId + "&customerId=" + customerId + "&filter=" + filter;
 
         String searchResponse = "NULL";
@@ -51,13 +51,13 @@ public class view_sales extends AppCompatActivity {
             salesCollection = new ArrayList<>();
             for (int i = 0; i < searchResponseArray.length(); i++) {
                 JSONObject salesTicket = searchResponseArray.getJSONObject(i);
-                float balanceValue = Float.parseFloat(salesTicket.getString("totalValue")) - Float.parseFloat(salesTicket.getString("paidAmount"));
+                double balanceValue = Double.parseDouble(salesTicket.getString("totalValue")) - Double.parseDouble(salesTicket.getString("paidAmount"));
 
-                if (salesTicket.getString("comeOrGo").equals("out")) {
+                if (salesTicket.getString("direction").equals("out")) {
                     cumulativeBalance += balanceValue;
                 }
 
-                Invoice foo = new Invoice(salesTicket.getString("transactionId"), salesTicket.getString("trackingNumber"), salesTicket.getString("entryDate"), salesTicket.getString("itemId"), salesTicket.getString("itemName"), salesTicket.getString("itemVariant"), salesTicket.getString("warehouseId"), salesTicket.getString("warehouseName"), salesTicket.getString("warehouseLocation"), salesTicket.getString("clientId"), salesTicket.getString("clientName"), salesTicket.getString("customerId"), salesTicket.getString("customerName"), salesTicket.getString("changeStock"), salesTicket.getString("finalStock"), salesTicket.getString("totalPcs"), salesTicket.getString("materialValue"), salesTicket.getString("gstValue"), salesTicket.getString("totalValue"), salesTicket.getString("valuePerPiece"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), salesTicket.getString("paymentDate"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance));
+                Overview foo = new Overview(salesTicket.getString("billOfEntryId"), salesTicket.getString("billOfEntry"), salesTicket.getString("salesInvoiceId"), salesTicket.getString("salesInvoice"), salesTicket.getString("direction"), salesTicket.getString("entryDate"), salesTicket.getString("item"), salesTicket.getString("warehouse"), salesTicket.getString("client"), salesTicket.getString("customer"), salesTicket.getString("bigQuantity"), salesTicket.getString("totalValue"), salesTicket.getString("isPaid"), salesTicket.getString("paidAmount"), String.valueOf(balanceValue), String.valueOf(cumulativeBalance), salesTicket.getString("date"), invoiceNumber, clientId, customerId);
                 dataToShow.add(foo);
             }
 
@@ -80,7 +80,9 @@ public class view_sales extends AppCompatActivity {
         SimpleTableHeaderAdapter sha = new SimpleTableHeaderAdapter(this, TABLE_HEADERS);
         sha.setTextSize(14);
         tableView.setHeaderAdapter(sha);
-        tableView.setDataAdapter(new InvoiceTableDataAdapter (this, dataToShow));
+        tableView.setDataAdapter(new OverviewTableAdapter (this, dataToShow));
+
+        // tableView.setDataAdapter(new InvoiceTableDataAdapter (this, dataToShow));
     }
 
     @Override

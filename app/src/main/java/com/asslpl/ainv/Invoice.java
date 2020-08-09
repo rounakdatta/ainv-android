@@ -1,9 +1,12 @@
 package com.asslpl.ainv;
 
+import android.app.Dialog;
+
 public class Invoice {
 
     public String transactionId;
-    public String trackingNumber;
+    public String billOfEntry;
+    public String salesInvoice;
     public String entryDate;
     public String itemId;
     public String itemName;
@@ -27,15 +30,21 @@ public class Invoice {
     public String paymentDate;
     public String balance;
     public String cumulativeBalance;
+    public String field1;
+    public String field2;
+    public String remarks;
 
-        public Invoice(final String transactionId, final String trackingNumber, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseId, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String customerId, final String customerName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance) {
+    Dialog dg;
+
+        public Invoice(final Dialog dg, final String transactionId, final String billOfEntry, final String salesInvoice, final String entryDate, final String itemId, final String itemName, final String itemVariant, final String warehouseName, final String warehouseLocation, final String clientId, final String clientName, final String customerId, final String customerName, final String changeStock, final String finalStock, final String totalPcs, final String materialValue, final String gstValue, final String totalValue, final String valuePerPiece, final String isPaid, final String paidAmount, final String paymentDate, final String balance, final String cumulativeBalance, final String field1, final String field2, final String remarks) {
+            this.dg = dg;
             this.transactionId = transactionId;
-            this.trackingNumber = trackingNumber;
+            this.billOfEntry = billOfEntry;
+            this.salesInvoice = salesInvoice;
             this.entryDate = entryDate;
             this.itemId = itemId;
             this.itemName = itemName;
             this.itemVariant = itemVariant;
-            this.warehouseId = warehouseId;
             this.warehouseName = warehouseName;
             this.warehouseLocation = warehouseLocation;
             this.clientId = clientId;
@@ -54,6 +63,9 @@ public class Invoice {
             this.paymentDate = paymentDate;
             this.balance = balance;
             this.cumulativeBalance = cumulativeBalance;
+            this.field1 = field1;
+            this.field2 = field2;
+            this.remarks = remarks;
     }
 
 //    public String getName() {
