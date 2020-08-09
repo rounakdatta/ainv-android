@@ -33,28 +33,19 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
             case 2:
                 renderedView = renderItemVariant(inv);
                 break;
-            case 3:
+            case 7:
                 renderedView = renderHsnCode(inv);
                 break;
-            case 4:
-                renderedView = renderItemQuantity(inv);
-                break;
-            case 5:
-                renderedView = renderUomRaw(inv);
-                break;
-            case 6:
-                renderedView = renderSmallboxQuantity(inv);
-                break;
-            case 7:
-                renderedView = renderUomSmall(inv);
-                break;
-            case 8:
+            case 3:
                 renderedView = renderBigcartonQuantity(inv);
                 break;
-            case 9:
-                renderedView = renderUomBig(inv);
+            case 4:
+                renderedView = renderSmallboxQuantity(inv);
                 break;
-            case 10:
+            case 5:
+                renderedView = renderItemQuantity(inv);
+                break;
+            case 6:
                 renderedView = renderWarehouseName(inv);
                 break;
         }
@@ -75,27 +66,15 @@ public class InventoryTableDataAdapter extends TableDataAdapter<Inventory>{
     }
 
     private View renderItemQuantity(final Inventory inv) {
-        return renderString(inv.itemQuantity);
-    }
-
-    private View renderUomRaw(final Inventory inv) {
-        return renderString(inv.uomRaw);
+        return renderString(inv.itemQuantity + " " + inv.uomBig);
     }
 
     private View renderSmallboxQuantity(final Inventory inv) {
-        return renderString(inv.smallboxQuantity);
-    }
-
-    private View renderUomSmall(final Inventory inv) {
-        return renderString(inv.uomSmall);
+        return renderString(inv.smallboxQuantity + " " + inv.uomSmall);
     }
 
     private View renderBigcartonQuantity(final Inventory inv) {
-        return renderString(inv.bigcartonQuantity);
-    }
-
-    private View renderUomBig(final Inventory inv) {
-        return renderString(inv.uomBig);
+        return renderString(inv.bigcartonQuantity + " " + inv.uomRaw);
     }
 
     private View renderWarehouseName(final Inventory inv) {

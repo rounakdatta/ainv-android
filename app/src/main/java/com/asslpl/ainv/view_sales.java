@@ -23,7 +23,7 @@ public class view_sales extends AppCompatActivity {
     private List<Overview> dataToShow = new ArrayList<>();
     private List<Overview> headerData = new ArrayList<>();
 
-    private static final String[] TABLE_HEADERS = { "In/Out", "BE / Pur. Inv.", "Sales Invoice", "In/Out Date", "Item", "Client", "Warehouse", "Customer", "Carton Quantity", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cum. Balance", "Expd. Pymt. Date" };
+    private static final String[] TABLE_HEADERS = { "Item", "In/Out", "BE / Pur. Inv.", "Sales Invoice", "In/Out Date", "Client", "Warehouse", "Customer", "Carton Quantity", "Total Value", "Full Paid ?", "Paid Amount", "Balance", "Cum. Balance", "Expd. Pymt. Date" };
 
     public void retrieveData(String filter) {
         Intent intent = getIntent();

@@ -8,21 +8,21 @@
 
     <Button
         android:id="@+id/salesSearchButton"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
+        android:layout_width="161dp"
+        android:layout_height="92dp"
         android:onClick="gotoSalesSearchPage"
         android:text="Stock Movement Search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.185" />
+        app:layout_constraintVertical_bias="0.25" />
 
     <Button
         android:id="@+id/stockSearchButton"
         android:layout_width="164dp"
-        android:layout_height="64dp"
+        android:layout_height="99dp"
         android:onClick="gotoItemSearchPage"
         android:text="Stock Availability Search"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -33,32 +33,6 @@
         app:layout_constraintVertical_bias="0.08" />
 
     <Button
-        android:id="@+id/warehouseEntryButton"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
-        android:onClick="gotoWarehouseEntryPage"
-        android:text="New Warehouse Creation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.455" />
-
-    <Button
-        android:id="@+id/itemEntryButton"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
-        android:onClick="gotoItemEntryPage"
-        android:text="New Item Creation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.343" />
-
-    <Button
         android:id="@+id/clientEntryButton"
         android:layout_width="164dp"
         android:layout_height="64dp"
@@ -66,23 +40,22 @@
         android:text="New Client Creation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.565" />
-
-    <Button
-        android:id="@+id/customerEntryButton"
-        android:layout_width="164dp"
-        android:layout_height="64dp"
-        android:onClick="gotoCustomerEntryPage"
-        android:text="New Customer Creation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.674" />
+        app:layout_constraintVertical_bias="0.652" />
+
+    <View
+        android:id="@+id/separator1"
+        android:layout_width="291dp"
+        android:layout_height="1dp"
+        android:background="#00050505"
+        android:foreground="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.363" />
 
     <Button
         android:id="@+id/transactionButton"
@@ -95,7 +68,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.842" />
+        app:layout_constraintVertical_bias="0.929" />
 
     <View
         android:id="@+id/separator2"
@@ -107,19 +80,46 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.734" />
+        app:layout_constraintVertical_bias="0.813" />
 
-    <View
-        android:id="@+id/separator1"
-        android:layout_width="291dp"
-        android:layout_height="1dp"
-        android:background="#00050505"
-        android:foreground="@color/black"
+    <Button
+        android:id="@+id/itemEntryButton"
+        android:layout_width="164dp"
+        android:layout_height="64dp"
+        android:onClick="gotoItemEntryPage"
+        android:text="New Item Creation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.283" />
+        app:layout_constraintVertical_bias="0.43" />
+
+    <Button
+        android:id="@+id/customerEntryButton"
+        android:layout_width="164dp"
+        android:layout_height="64dp"
+        android:onClick="gotoCustomerEntryPage"
+        android:text="New Customer Creation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.761" />
+
+    <Button
+        android:id="@+id/warehouseEntryButton"
+        android:layout_width="164dp"
+        android:layout_height="64dp"
+        android:onClick="gotoWarehouseEntryPage"
+        android:text="New Warehouse Creation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.542" />
 
     <ImageView
         android:id="@+id/logoutButton"

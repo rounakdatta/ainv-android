@@ -42,19 +42,19 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
         View renderedView = null;
 
         switch (columnIndex) {
-            case 0:
+            case 1:
                 renderedView = renderDirection(inv);
                 break;
-            case 1:
+            case 2:
                 renderedView = renderBillOfEntry(inv);
                 break;
-            case 2:
+            case 3:
                 renderedView = renderSalesInvoice(inv);
                 break;
-            case 3:
+            case 4:
                 renderedView = renderEntryDate(inv);
                 break;
-            case 4:
+            case 0:
                 renderedView = renderItem(inv);
                 break;
             case 6:
@@ -240,7 +240,7 @@ public class OverviewTableAdapter extends TableDataAdapter<Overview>{
                     sha = new SimpleTableHeaderAdapter(getContext(), TABLE_HEADERS_OUT);
                 }
 
-                sha.setTextSize(14);
+                sha.setTextSize(11);
                 tableView.setHeaderAdapter(sha);
                 tableView.setDataAdapter(new InvoiceTableDataAdapter (getContext(), dataToShow));
 
