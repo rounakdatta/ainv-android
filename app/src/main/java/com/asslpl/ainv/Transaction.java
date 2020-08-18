@@ -40,6 +40,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -147,17 +148,25 @@ public class Transaction extends AppCompatActivity {
         String smallPerBig = "0";
         String cartonQuantity = "0";
 
+        String smallUnit = "pcs";
+        String mediumUnit = "box";
+        String bigUnit = "carton";
+
         try {
 
             rawPerSmall = searchResponseDict.getString("rawPerSmall");
             smallPerBig = searchResponseDict.getString("smallPerBig");
             cartonQuantity = searchResponseDict.getString("cartonQuantity");
 
+            smallUnit = searchResponseDict.getString("smallUnit");
+            mediumUnit = searchResponseDict.getString("mediumUnit");
+            bigUnit = searchResponseDict.getString("bigUnit");
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return asList(rawPerSmall, smallPerBig, cartonQuantity);
+        return asList(rawPerSmall, smallPerBig, cartonQuantity, smallUnit, mediumUnit, bigUnit);
 
     }
 
@@ -227,6 +236,12 @@ public class Transaction extends AppCompatActivity {
 
             TextView comeOrGoSecondPageTv = mViewPager.getRootView().findViewById(R.id.comeOrGoSecond);
             comeOrGoSecondPageTv.setText(comeOrGoTv.getText());
+
+            TextView rateUnits = mViewPager.getRootView().findViewById(R.id.rateUnits);
+            rateUnits.setText(String.format("%s;%s;%s", response.get(3), response.get(4), response.get(5)));
+
+            TextView quantityDescription = mViewPager.getRootView().findViewById(R.id.quantityDescription);
+            quantityDescription.setText(String.format("0 %s = 0 %s = 0 %s", response.get(3), response.get(4), response.get(5)));
 
         } catch (Exception e) {
             System.out.println(e);
@@ -339,6 +354,9 @@ public class Transaction extends AppCompatActivity {
         final TextView pcsPerBox = dialog.findViewById(R.id.pcsPerBox);
         final TextView boxPerCarton = dialog.findViewById(R.id.boxPerCarton);
 
+        TextView rateUnitsTv = mViewPager.findViewById(R.id.rateUnits);
+        final String[] rateUnits = rateUnitsTv.getText().toString().split(";");
+
         pcsPerBox.setText(secretRate1.getText());
         boxPerCarton.setText(secretRate2.getText());
 
@@ -352,13 +370,13 @@ public class Transaction extends AppCompatActivity {
                 dialog.dismiss();
 
                 int cartonCount = Integer.parseInt(String.valueOf(bigQuantity.getText()));
-                int boxCount = cartonCount * Integer.parseInt(String.valueOf(secretRate1.getText()));
-                int pcsCount = boxCount * Integer.parseInt(String.valueOf(secretRate2.getText()));
+                int boxCount = cartonCount * Integer.parseInt(String.valueOf(secretRate2.getText()));
+                float pcsCount = boxCount * Float.parseFloat(String.valueOf(secretRate1.getText()));
 
-                String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
                 quantityDescription.setText(quantityDisplayer);
 
-                totalPcs.setText(Integer.toString(pcsCount));
+                totalPcs.setText(Float.toString(pcsCount));
 
             }
         });
@@ -372,8 +390,8 @@ public class Transaction extends AppCompatActivity {
         TextView totalValueSecond = mViewPager.getRootView().findViewById(R.id.finalValue);
 
         try {
-            if (Double.parseDouble(totalValueSecond.getText().toString()) < 0) {
-                Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Number of items cannot be negative!", Toast.LENGTH_LONG);
+            if (Double.parseDouble(totalValueSecond.getText().toString()) <= 0) {
+                Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Number of items cannot be zero / negative!", Toast.LENGTH_LONG);
                 negativeValueBlocker.show();
                 return;
             }
@@ -1192,8 +1210,11 @@ public class Transaction extends AppCompatActivity {
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                         int calculatedValue = 0;
-                        int rate1 = Integer.parseInt(secretRate1.getText().toString());
-                        int rate2 = Integer.parseInt(secretRate2.getText().toString());
+                        int rate1 = Integer.parseInt(secretRate2.getText().toString()); // mind here!!!
+                        float rate2 = Float.parseFloat(secretRate1.getText().toString()); // terrible hacks!!!
+
+                        TextView rateUnitsTv = rootView.findViewById(R.id.rateUnits);
+                        String[] rateUnits = rateUnitsTv.getText().toString().split(";");
 
                         try {
                             if (comeOrGoSecondPage.getText() == "+") {
@@ -1203,12 +1224,12 @@ public class Transaction extends AppCompatActivity {
 
                                 int cartonCount = Integer.parseInt(s.toString());
                                 int boxCount = cartonCount * rate1;
-                                int pcsCount = boxCount * rate2;
+                                float pcsCount = boxCount * rate2;
 
-                                String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
                                 quantityDescription.setText(quantityDisplayer);
 
-                                totalPcs.setText(Integer.toString(pcsCount));
+                                totalPcs.setText(Float.toString(pcsCount));
 
                             } else {
 
@@ -1217,12 +1238,12 @@ public class Transaction extends AppCompatActivity {
 
                                 int cartonCount = Integer.parseInt(s.toString());
                                 int boxCount = cartonCount * rate1;
-                                int pcsCount = boxCount * rate2;
+                                float pcsCount = boxCount * rate2;
 
-                                String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
                                 quantityDescription.setText(quantityDisplayer);
 
-                                totalPcs.setText(Integer.toString(pcsCount));
+                                totalPcs.setText(Float.toString(pcsCount));
 
                             }
                         } catch(Exception e) {
@@ -1232,12 +1253,12 @@ public class Transaction extends AppCompatActivity {
 
                             int cartonCount = Integer.parseInt(s.toString());
                             int boxCount = cartonCount * rate1;
-                            int pcsCount = boxCount * rate2;
+                            float pcsCount = boxCount * rate2;
 
-                            String quantityDisplayer = String.format("%s carton = %s box = %s pcs", cartonCount, boxCount, pcsCount);
+                            String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
                             quantityDescription.setText(quantityDisplayer);
 
-                            totalPcs.setText(Integer.toString(pcsCount));
+                            totalPcs.setText(Float.toString(pcsCount));
                         }
 
                         // System.out.println(calculatedValue);
