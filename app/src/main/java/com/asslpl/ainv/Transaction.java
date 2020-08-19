@@ -240,7 +240,7 @@ public class Transaction extends AppCompatActivity {
             rateUnits.setText(String.format("%s;%s;%s", response.get(3), response.get(4), response.get(5)));
 
             TextView quantityDescription = mViewPager.getRootView().findViewById(R.id.quantityDescription);
-            quantityDescription.setText(String.format("0 %s = 0 %s = 0 %s", response.get(3), response.get(4), response.get(5)));
+            quantityDescription.setText(String.format("0 %s = 0 %s = 0 %s", response.get(5), response.get(4), response.get(3)));
 
         } catch (Exception e) {
             System.out.println(e);
@@ -372,7 +372,7 @@ public class Transaction extends AppCompatActivity {
                 int boxCount = cartonCount * Integer.parseInt(String.valueOf(secretRate2.getText()));
                 float pcsCount = boxCount * Float.parseFloat(String.valueOf(secretRate1.getText()));
 
-                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
+                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[2], boxCount, rateUnits[1], pcsCount, rateUnits[0]);
                 quantityDescription.setText(quantityDisplayer);
 
                 totalPcs.setText(Float.toString(pcsCount));
@@ -1225,7 +1225,7 @@ public class Transaction extends AppCompatActivity {
                                 int boxCount = cartonCount * rate1;
                                 float pcsCount = boxCount * rate2;
 
-                                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
+                                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[2], boxCount, rateUnits[1], pcsCount, rateUnits[0]);
                                 quantityDescription.setText(quantityDisplayer);
 
                                 totalPcs.setText(Float.toString(pcsCount));
@@ -1239,7 +1239,7 @@ public class Transaction extends AppCompatActivity {
                                 int boxCount = cartonCount * rate1;
                                 float pcsCount = boxCount * rate2;
 
-                                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
+                                String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[2], boxCount, rateUnits[1], pcsCount, rateUnits[0]);
                                 quantityDescription.setText(quantityDisplayer);
 
                                 totalPcs.setText(Float.toString(pcsCount));
@@ -1254,7 +1254,7 @@ public class Transaction extends AppCompatActivity {
                             int boxCount = cartonCount * rate1;
                             float pcsCount = boxCount * rate2;
 
-                            String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[0], boxCount, rateUnits[1], pcsCount, rateUnits[2]);
+                            String quantityDisplayer = String.format("%s %s = %s %s = %s %s", cartonCount, rateUnits[2], boxCount, rateUnits[1], pcsCount, rateUnits[0]);
                             quantityDescription.setText(quantityDisplayer);
 
                             totalPcs.setText(Float.toString(pcsCount));
