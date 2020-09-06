@@ -129,7 +129,7 @@ public class InvoiceTableDataAdapter extends TableDataAdapter<Invoice>{
     }
 
     private View renderTotalPcs(final Invoice inv) {
-        return renderString(inv.totalPcs);
+        return renderString(inv.totalPcs + " " + inv.rawUnit);
     }
 
     private View renderTotalPayment(final Invoice inv) {
