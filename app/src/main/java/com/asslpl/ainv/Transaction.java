@@ -5,14 +5,16 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AppCompatActivity;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -20,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,7 +36,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,20 +58,29 @@ public class Transaction extends AppCompatActivity {
 
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    public ViewPager mViewPager;
+    public NonSwipeableViewPager mViewPager;
     final Context context = this;
+
+    private void clearCache(TinyDB tinydb) {
+        tinydb.remove("transaction.first");
+        tinydb.remove("transaction.item.name");
+        tinydb.remove("transaction.item.variant");
+
+        tinydb.putBoolean("transaction.first", true);
+        System.out.println("___________________ CLEARED CACHE _______________________");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +94,11 @@ public class Transaction extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        TinyDB tinydb = new TinyDB(mViewPager.getContext());
+        clearCache(tinydb);
     }
 
 
@@ -226,6 +239,9 @@ public class Transaction extends AppCompatActivity {
             mViewPager.setCurrentItem(1);
             TextView currentTv = mViewPager.getRootView().findViewById(R.id.currentValue);
             currentTv.setText(response.get(2));
+
+            TextView bigQ = mViewPager.getRootView().findViewById(R.id.bigQuantity);
+            bigQ.setText("");
 
             TextView secretRate1 = mViewPager.getRootView().findViewById(R.id.secretRate1);
             TextView secretRate2 = mViewPager.getRootView().findViewById(R.id.secretRate2);
@@ -557,11 +573,17 @@ public class Transaction extends AppCompatActivity {
         JSONArray clientArray = null;
         JSONArray customerArray = null;
 
+        int firstItemSelectedPosition = -1;
+        int firstItemVariantSelectedPosition = -1;
+
         int itemParentPosition = 0;
+
         String ITEMID = "-1";
         String WAREHOUSEID = "-1";
         String CLIENTID = "-1";
         String CUSTID = "50";
+
+        boolean firstTime = true;
 
         View rootView;
 
@@ -953,54 +975,76 @@ public class Transaction extends AppCompatActivity {
                 warehouseIdTv = rootView.findViewById(R.id.warehouseId);
 
                 // logic for populating the spinner and selecting the first item by default
-                HttpGetRequest itemsGetter = new HttpGetRequest();
-                try {
-                    String allItems = itemsGetter.execute(itemDataURL).get();
-                    allItemsArray = new JSONArray(allItems);
 
-                    itemNames = new ArrayList<>();
-                    for (int i = 0; i < allItemsArray.length(); i++) {
-                        itemNames.add(allItemsArray.getJSONObject(i).getString("name"));
-                    }
-
-                    ArrayAdapter<String> itemDisplayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, itemNames);
-                    itemDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                    itemSelector.setAdapter(itemDisplayAdapter);
-
-                    // now the item variant spinner must also be populated
-
+                    HttpGetRequest itemsGetter = new HttpGetRequest();
                     try {
-                        itemVariantsArray = allItemsArray.getJSONObject(0).getJSONArray("description");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        String allItems = itemsGetter.execute(itemDataURL).get();
+                        allItemsArray = new JSONArray(allItems);
+
+                        itemNames = new ArrayList<>();
+                        for (int i = 0; i < allItemsArray.length(); i++) {
+                            itemNames.add(allItemsArray.getJSONObject(i).getString("name"));
+                        }
+
+                        // now the item variant spinner must also be populated
+
+                        try {
+                            itemVariantsArray = allItemsArray.getJSONObject(0).getJSONArray("description");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        itemVariants = new ArrayList<>();
+                        for (int i = 0; i < itemVariantsArray.length(); i++) {
+                            itemVariants.add(itemVariantsArray.getString(i));
+                        }
+
+                        ArrayAdapter<String> itemDisplayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, itemNames);
+                        itemDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                        itemSelector.setAdapter(itemDisplayAdapter);
+
+                        ArrayAdapter<String> variantDisplayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, itemVariants);
+                        variantDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                        itemVariantSelector.setAdapter(variantDisplayAdapter);
+
+                        // set the default capturing variable (index 0 variant) of first item
+
+
+                    } catch (Exception e) {
+                        System.out.println(e);
+
+                        Toast toast = Toast.makeText(getContext(), "Error fetching data!", Toast.LENGTH_SHORT);
+                        toast.show();
+
                     }
 
-                    itemVariants = new ArrayList<>();
-                    for (int i = 0; i < itemVariantsArray.length(); i++) {
-                        itemVariants.add(itemVariantsArray.getString(i));
+                final SpinnerInteractionListener itemVariantSelectedListener = new SpinnerInteractionListener() {
+                    @Override
+                    public void doWork(AdapterView<?> parent, View view, int position, long id) {
+                        tinydb.putInt("transaction.item.variant", position);
+                        int itemNamePosition = tinydb.getInt("transaction.item.name");
+
+                        // set the default capturing variable (index 0 variant) on other item select
+                        try {
+                            ITEMID = allItemsArray.getJSONObject(itemNamePosition).getJSONArray("itemId").getString(position);
+                            itemIdTv.setText(ITEMID);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        firstItemVariantSelectedPosition = position;
+
                     }
-
-                    ArrayAdapter<String> variantDisplayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, itemVariants);
-                    variantDisplayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                    itemVariantSelector.setAdapter(variantDisplayAdapter);
-
-                    // set the default capturing variable (index 0 variant) of first item
-                    ITEMID = allItemsArray.getJSONObject(0).getJSONArray("itemId").getString(0);
-                    itemIdTv.setText(ITEMID);
-
-
-                } catch(Exception e) {
-                    System.out.println(e);
-
-                    Toast toast = Toast.makeText(getContext(), "Error fetching data!", Toast.LENGTH_SHORT);
-                    toast.show();
-
-                }
+                };
 
                 // logic when a new item name is selected
-                itemSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                SpinnerInteractionListener itemSelectedListener = new SpinnerInteractionListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    public void doWork(AdapterView<?> parent, View view, int position, long id) {
+                        tinydb.putInt("transaction.item.name", position);
+
+                        firstItemSelectedPosition = position;
 
                         try {
                             itemVariantsArray = allItemsArray.getJSONObject(position).getJSONArray("description");
@@ -1026,43 +1070,39 @@ public class Transaction extends AppCompatActivity {
                         itemParentPosition = position;
 
                         // set the default capturing variable (index 0 variant) on other item select
-                        try {
-                            ITEMID = allItemsArray.getJSONObject(position).getJSONArray("itemId").getString(0);
-                            itemIdTv.setText(ITEMID);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        itemVariantSelector.setSelection(0);
+                        itemVariantSelectedListener.doWork(null, null, 0, -1);
 
                     }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
+                };
+                    itemSelector.setOnTouchListener(itemSelectedListener);
+                itemSelector.setOnItemSelectedListener(itemSelectedListener);
 
                 // logic when a new item variant is selected
-                itemVariantSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                itemVariantSelector.setOnTouchListener(itemVariantSelectedListener);
+                itemVariantSelector.setOnItemSelectedListener(itemVariantSelectedListener);
 
-                        // set the default capturing variable (index 0 variant) on other item select
-                        try {
-                            ITEMID = allItemsArray.getJSONObject(itemParentPosition).getJSONArray("itemId").getString(position);
-                            itemIdTv.setText(ITEMID);
+                // FIRST / NOT
+                if (tinydb.getBoolean("transaction.first")) {
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    itemSelector.setSelection(0);
+                    itemSelectedListener.doWork(null, null, 0, -1);
 
-                    }
+                    itemVariantSelector.setSelection(0);
+                    itemVariantSelectedListener.doWork(null, null, 0, -1);
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
+                    tinydb.putBoolean("transaction.first", false);
+                } else {
 
-                    }
-                });
+                    int itemNamePosition = tinydb.getInt("transaction.item.name");
+                    int itemVariantPosition = tinydb.getInt("transaction.item.variant");
+
+                    itemSelector.setSelection(itemNamePosition);
+                    itemSelectedListener.doWork(null, null, itemNamePosition, -1);
+
+                    itemVariantSelector.setSelection(itemVariantPosition + 1);
+                    itemVariantSelectedListener.doWork(null, null, itemVariantPosition + 1, -1);
+                }
 
                 warehouseSelector = rootView.findViewById(R.id.warehouse);
                 clientIdTv = rootView.findViewById(R.id.clientId);

@@ -1,6 +1,6 @@
 package com.asslpl.ainv;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 public class sales_deep_search extends AppCompatActivity {

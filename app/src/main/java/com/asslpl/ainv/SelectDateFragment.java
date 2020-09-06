@@ -3,8 +3,8 @@ package com.asslpl.ainv;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.widget.Button;
+import androidx.fragment.app.DialogFragment;
+
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 public class  SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

@@ -1,8 +1,8 @@
 package com.asslpl.ainv;
 
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class RowHeader extends Cell {
     public RowHeader(@NonNull String id, @Nullable String data) {
