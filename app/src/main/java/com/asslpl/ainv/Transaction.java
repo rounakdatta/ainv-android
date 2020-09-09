@@ -404,9 +404,21 @@ public class Transaction extends AppCompatActivity {
 
         TextView totalValueSecond = mViewPager.getRootView().findViewById(R.id.finalValue);
 
+        TextView valueChanged = mViewPager.getRootView().findViewById(R.id.changeValue);
+
         try {
-            if (Double.parseDouble(totalValueSecond.getText().toString()) <= 0) {
-                Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Number of items cannot be zero / negative!", Toast.LENGTH_LONG);
+            if (Double.parseDouble(valueChanged.getText().toString()) == 0) {
+                Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Zero stock change isn't allowed!", Toast.LENGTH_LONG);
+                negativeValueBlocker.show();
+                return;
+            }
+        } catch(Exception e) {
+            return;
+        }
+
+        try {
+            if (Double.parseDouble(totalValueSecond.getText().toString()) < 0) {
+                Toast negativeValueBlocker = Toast.makeText(getApplicationContext(), "Final number of items cannot be negative!", Toast.LENGTH_LONG);
                 negativeValueBlocker.show();
                 return;
             }
