@@ -86,7 +86,7 @@
         android:clickable="true"
         android:onClick="selectNewRates"
         android:src="@android:drawable/ic_menu_edit"
-        app:backgroundTint="@color/background_color"
+        app:backgroundTint="@color/cardview_light_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
