@@ -60,6 +60,9 @@ public class ultimate_transaction extends AppCompatActivity {
             public void onClick(View view) {
                 String transactionResponse= "NULL";
 
+                // lock the button first to prevent multiple clicks
+                submitButton.setEnabled(false);
+
                 // sending data
                 String testEndpoint = getResources().getString(R.string.serverEndpoint);
                 String transactionURL = testEndpoint + "/api/put/transaction/";
@@ -80,6 +83,7 @@ public class ultimate_transaction extends AppCompatActivity {
                         finish();
                     } else {
                         toast = Toast.makeText(getApplicationContext(), "Transaction error!", Toast.LENGTH_LONG);
+                        submitButton.setEnabled(true);
                     }
 
                     toast.show();
